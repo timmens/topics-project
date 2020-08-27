@@ -1,0 +1,10 @@
+- file: intro
+- file: simulated
+  sections:
+      - file: simulated_intro
+      - file: simulated_reverse_engineering
+      - file: simulated_final
+- file: stock
+  sections:
+      - file: stock_intro
+      - file: stock_final

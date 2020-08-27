@@ -1,0 +1,14 @@
+# Book settings
+title: Topics in Econometrics and Statistics
+author: Tim Mensinger
+
+execute:
+    cache: ""
+
+repository:
+    url: https://github.com/timmens/topics-project
+    path_to_book: "book"
+
+latex:
+  latex_documents:
+    targetname: book.tex

@@ -1,0 +1,13 @@
+.ipynb_checkpoints
+Untitled.ipynb
+
+__pycache__
+.vscode/
+catboost_info/
+
+data/
+bld/*.parquet
+bld/figures/
+
+notebooks/
+literature/

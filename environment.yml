@@ -1,0 +1,31 @@
+name: topics-project
+
+channels:
+  - conda-forge
+
+dependencies:
+  - python=3.7
+  - flake8
+  - click
+  - pylint
+  - pdbpp
+  - pip=19.0.3
+  - ipykernel
+  - jupyterlab
+  - ghp-import
+
+  - numpy
+  - pandas
+
+  - matplotlib
+  - seaborn
+
+  - scikit-learn
+  - keras
+  - catboost
+
+  - pip:
+    - black
+    - blackcellmagic
+    - pre-commit
+    - jupyter-book
