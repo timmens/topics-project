@@ -35,9 +35,10 @@ from sklearn.metrics import mean_squared_error
 from catboost import CatBoostRegressor
 
 ROOT = Path(os.getcwd()).parent
+np.random.seed(0)
 
-df_train = pd.read_parquet(ROOT / "data" / "train-simulated.parquet")
-df_val = pd.read_parquet(ROOT / "data" / "validate-simulated.parquet")
+df_train = pd.read_parquet(ROOT / "bld" / "train_simulated.parquet")
+df_val = pd.read_parquet(ROOT / "bld" / "validate_simulated.parquet")
 
 y_train = df_train["Y"]
 X_train = df_train.drop("Y", axis=1)
@@ -67,7 +68,7 @@ print(f"(Linear Model) MSE: {mse_lm}")
 
 ## 2. Deep Neural Network with Dropout Regularization
 
-I fit a deep neural network using the popular [keras](https://keras.io/) library which provides an intuitive API for the powerful [tensorflow](https://www.tensorflow.org/) package. The neural network architecture is set using the ``build_regressor`` function. I choose an archtecture with 10 layers. For the first layer I choose 20 hidden nodes, 15 hidden nodes for the second layer and 10 hidden nodes for the third to tenth layer. Moreover I use the so called [ReLu](https://en.wikipedia.org/wiki/Rectifier_(neural_networks)) activation function, which has been proven to outperform the classic sigmoid activation function in several ways, see for example [Krizhevsky et al. 2012](https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf). As overfitting is a big problem with deep networks I employ a popular technique called dropout regularization to mitigate this effect, see [Srivastava et al. 2014](https://jmlr.org/papers/volume15/srivastava14a/srivastava14a.pdf). Dropout leads to neurons in a layer being randomly deactivated for a single epoch during the backpropagation, which in turn leads to neighboring neurons not developing a relationship that is too strongly dependent, which in turn is said to mitigate overfitting.
+I fit a deep neural network using the popular [keras](https://keras.io/) library which provides an intuitive API for the powerful [tensorflow](https://www.tensorflow.org/) package. The neural network architecture is set using the ``build_regressor`` function. I choose an archtecture with 7 layers. For the first layer I choose 50 hidden nodes, 25 hidden nodes for the second layer and 10 hidden nodes for the third to seventh layer. Moreover I use the so called [ReLu](https://en.wikipedia.org/wiki/Rectifier_(neural_networks)) activation function, which has been proven to outperform the classic sigmoid activation function in several ways, see for example [Krizhevsky et al. 2012](https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf). As overfitting is a big problem with deep networks I employ a popular technique called dropout regularization to mitigate this effect, see [Srivastava et al. 2014](https://jmlr.org/papers/volume15/srivastava14a/srivastava14a.pdf). Dropout leads to neurons in a layer being randomly deactivated for a single epoch during the backpropagation, which in turn leads to neighboring neurons not developing a relationship that is too strongly dependent, which in turn is said to mitigate overfitting.
 
 ***Note.***
 
@@ -83,18 +84,18 @@ def build_regressor():
     # first hidden layer
     regressor.add(Dense(units=50, activation="relu", input_dim=N_COL))
     regressor.add(Dropout(0.2))
-
+    
     # second hidden layer
     regressor.add(Dense(units=25, activation="relu"))
     regressor.add(Dropout(0.2))
-
+    
     # third to tenth hidden layer
     for _ in range(5):
         regressor.add(Dense(units=10, activation="relu"))
-
+    
     # output layer
     regressor.add(Dense(units=1, activation="linear"))
-
+    
     # compile model
     regressor.compile(optimizer="adam", loss="mean_squared_error")
     return regressor
@@ -115,17 +116,18 @@ In this two stage procedure I first fit a random forest on the full set of featu
 ***First Stage***
 
 rf = RandomForestRegressor(
-    n_estimators=250,
-    max_features=25,
+    n_estimators=250, 
+    max_features=25, 
     max_depth=15,
     min_samples_leaf=100,
     bootstrap=True,
-    n_jobs=3
+    n_jobs=3,
+    random_state=1,
 )
 rf.fit(X_train, y_train.values)
 
 std = np.std(
-    [tree.feature_importances_ for tree in rf.estimators_],
+    [tree.feature_importances_ for tree in rf.estimators_], 
     axis=0
 )
 indices = np.argsort(rf.feature_importances_)[::-1]
@@ -136,7 +138,7 @@ mse_first_stage = mean_squared_error(y_val, prediction)
 print(f"First stage MSE: {mse_first_stage}")
 
 # plotting code: can be safely ignored
-plt.rcParams.update({'font.size': 20, 'figure.figsize': (12, 6)})
+plt.rcParams.update({'font.size': 16, 'figure.figsize': (16, 6)})
 cut = 40
 x = range(X_train.shape[1])[:cut]
 y = rf.feature_importances_[indices][:cut]
@@ -153,12 +155,13 @@ XX_train = X_train[relevant]
 XX_val = X_val[relevant]
 
 rf = RandomForestRegressor(
-    n_estimators=250,
-    max_features=15,
+    n_estimators=250, 
+    max_features=15, 
     max_depth=15,
     min_samples_leaf=100,
     bootstrap=True,
-    n_jobs=3
+    n_jobs=3,
+    random_state=1,
 )
 rf.fit(XX_train, y_train.values)
 
@@ -180,7 +183,7 @@ Write about the theory of Catboost HERERERE!!!
 
 gbt = CatBoostRegressor(
     iterations=1500,
-    learning_rate=0.01,
+    learning_rate=0.01, 
     depth=5,
     loss_function="RMSE",
     random_state=1

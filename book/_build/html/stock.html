@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Introduction &#8212; Topics in Econometrics and Statistics</title>
+    <title>Stock Data &#8212; Topics in Econometrics and Statistics</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css" integrity="sha384-KA6wR/X5RY4zFAHpv/CnoG2UW1uogYfdnP67Uv7eULvTveboZJg0qUpmJZb5VqzN" crossorigin="anonymous">
     <link href="_static/css/index.css" rel="stylesheet">
     <link rel="stylesheet" href="_static/sphinx-book-theme.css" type="text/css" />
@@ -39,7 +39,8 @@
     <script async="async" src="_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Simulated Data" href="simulated.html" />
+    <link rel="next" title="Data Description" href="stock_intro.html" />
+    <link rel="prev" title="Final" href="simulated_final.html" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="docsearch:language" content="en">
@@ -72,21 +73,33 @@
 <nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
   <ul class="nav sidenav_l1">
  <li class="toctree-l1">
-  <a class="reference internal" href="#">
+  <a class="reference internal" href="intro.html">
    Introduction
   </a>
  </li>
 </ul>
-<ul class="nav sidenav_l1">
+<ul class="current nav sidenav_l1">
  <li class="toctree-l1">
   <a class="reference internal" href="simulated.html">
    Simulated Data
   </a>
  </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="stock.html">
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
    Stock Data
   </a>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="stock_intro.html">
+     Data Description
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="stock_final.html">
+     Final
+    </a>
+   </li>
+  </ul>
  </li>
 </ul>
 
@@ -130,7 +143,7 @@
         <!-- ipynb file if we had a myst markdown file -->
         
         <!-- Download raw file -->
-        <a class="dropdown-buttons" href="_sources/intro.ipynb"><button type="button"
+        <a class="dropdown-buttons" href="_sources/stock.ipynb"><button type="button"
                 class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
                 data-placement="left">.ipynb</button></a>
         <!-- Download PDF via print -->
@@ -157,29 +170,7 @@
             <i class="fas fa-list"></i> Contents
         </div>
         <nav id="bd-toc-nav">
-            <ul class="nav section-nav flex-column">
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#problem-description">
-   Problem Description
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#data-format">
-   Data Format
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#code">
-   Code
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#predictions">
-   Predictions
-  </a>
- </li>
-</ul>
-
+            
         </nav>
     </div>
 </div>
@@ -188,61 +179,10 @@
         
               <div>
                 
-  <div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
-
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-
-<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span>
-<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">FileLink</span>
-
-<span class="n">ROOT</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span><span class="o">.</span><span class="n">parent</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="section" id="introduction">
-<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
-<p><em><strong>Topics in Econometrics and Statistics, University of Bonn, 2020 – Prof. Joachim Freyberger</strong></em></p>
-<p>In this document I present my submission to the project for the topics class in
-econometrics and statistics, due by 13th September 2020.</p>
-<div class="section" id="problem-description">
-<h2>Problem Description<a class="headerlink" href="#problem-description" title="Permalink to this headline">¶</a></h2>
-<p>For the project we have been given a simulated data set and a real data set. For each
-data set some of the observed outcomes are held back. The task is to build a model for
-each data set on the training set and submit the predictions on the test set.</p>
-<p>The following part of this document is structured as follows. At the end of this
-section I present a link to my predictions for the respective data sets. In the next
-chapter I present the model for the simulated data set. Aftwards I introduce my model
-for the stock data set.</p>
-</div>
-<div class="section" id="data-format">
-<h2>Data Format<a class="headerlink" href="#data-format" title="Permalink to this headline">¶</a></h2>
-<p>Please note that I changed the file format from an RData file to a <a class="reference external" href="https://parquet.apache.org/">parquet</a> file, as this is not dependent on the specific programming language. If you want to reproduce my results using my code (see below) you need to transform the RData files to parquet files. This can easily be done, for example, with the <a class="reference external" href="https://spark.apache.org/docs/1.6.2/api/R/write.parquet.html">SparkR</a> package for R. For the project to run I expect the two data files to be located in the folder <code class="docutils literal notranslate"><span class="pre">data</span></code> with names <code class="docutils literal notranslate"><span class="pre">simulated_data.parquet</span></code> and <code class="docutils literal notranslate"><span class="pre">stock_data.parquet</span></code>, respectively.</p>
-</div>
-<div class="section" id="code">
-<h2>Code<a class="headerlink" href="#code" title="Permalink to this headline">¶</a></h2>
-<p>In this project I have to sets of code bases. Nearly all of the code presented in the following notebooks is embedded in the notebooks themselves. For the final predictions however, I use Python scripts which are stored <a class="reference external" href="https://github.com/timmens/topics-project/">here</a>. The script <a class="reference external" href="https://github.com/timmens/topics-project/tree/main/codes/build_project.py">build_project.py</a> runs all scripts that are necessary to produce the predictions. If you want to rerun these codes on your computer open your favorite terminal emulator and run the following line by line (I assume you have at least <a class="reference external" href="https://docs.conda.io/en/latest/miniconda.html">miniconda</a> already installed on your system, otherwise read the note below.)</p>
-<div class="highlight-zsh notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/timmens/topics-project.git
-conda env create -f environment.yml
-conda activate topics-project
-<span class="nb">cd</span> codes
-python create_predictions.py
-</pre></div>
-</div>
-<p><em><strong>Note.</strong></em></p>
-<p>It is not necessary to use conda here as long as all the packages that I use are available to the Python interpreter. Conda just provides a very easy way to create a sandbox environment in which all packages will be available without messing with the system.</p>
-</div>
-<div class="section" id="predictions">
-<h2>Predictions<a class="headerlink" href="#predictions" title="Permalink to this headline">¶</a></h2>
-<p>Predictions for the respective data sets are stored on github and can be downloaded here</p>
-<ul class="simple">
-<li><p>Simulated data: <a class="reference external" href="https://rawcdn.githack.com/timmens/topics-project/4045ae9fac293ec2aff62d4d9e6f3f8989f768cb/bld/predictions_simulated.csv">(click here to download)</a></p></li>
-<li><p>Stock data: <a class="reference external" href="https://rawcdn.githack.com/timmens/topics-project/4045ae9fac293ec2aff62d4d9e6f3f8989f768cb/bld/predictions_stock.csv">(click here to download)</a></p></li>
-</ul>
+  <div class="section" id="stock-data">
+<h1>Stock Data<a class="headerlink" href="#stock-data" title="Permalink to this headline">¶</a></h1>
+<p>In the following sections I present my investigation of the stock data set. Again, I start with a quick exploration of the data set as well as a short explaination of how I chose to split the data into training and validation samples. Then I jump directly to the last section where I present my final model and some benchmarks.</p>
 <div class="toctree-wrapper compound">
-</div>
 </div>
 </div>
 
@@ -274,7 +214,8 @@ python create_predictions.py
     
     <div class='prev-next-bottom'>
         
-    <a class='right-next' id="next-link" href="simulated.html" title="next page">Simulated Data</a>
+    <a class='left-prev' id="prev-link" href="simulated_final.html" title="previous page">Final</a>
+    <a class='right-next' id="next-link" href="stock_intro.html" title="next page">Data Description</a>
 
     </div>
     <footer class="footer mt-5 mt-md-0">

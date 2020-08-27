@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Introduction &#8212; Topics in Econometrics and Statistics</title>
+    <title>Data Description &#8212; Topics in Econometrics and Statistics</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css" integrity="sha384-KA6wR/X5RY4zFAHpv/CnoG2UW1uogYfdnP67Uv7eULvTveboZJg0qUpmJZb5VqzN" crossorigin="anonymous">
     <link href="_static/css/index.css" rel="stylesheet">
     <link rel="stylesheet" href="_static/sphinx-book-theme.css" type="text/css" />
@@ -39,7 +39,8 @@
     <script async="async" src="_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Simulated Data" href="simulated.html" />
+    <link rel="next" title="Final" href="stock_final.html" />
+    <link rel="prev" title="Stock Data" href="stock.html" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="docsearch:language" content="en">
@@ -72,21 +73,33 @@
 <nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
   <ul class="nav sidenav_l1">
  <li class="toctree-l1">
-  <a class="reference internal" href="#">
+  <a class="reference internal" href="intro.html">
    Introduction
   </a>
  </li>
 </ul>
-<ul class="nav sidenav_l1">
+<ul class="current nav sidenav_l1">
  <li class="toctree-l1">
   <a class="reference internal" href="simulated.html">
    Simulated Data
   </a>
  </li>
- <li class="toctree-l1">
+ <li class="toctree-l1 current active">
   <a class="reference internal" href="stock.html">
    Stock Data
   </a>
+  <ul class="current">
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
+     Data Description
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="stock_final.html">
+     Final
+    </a>
+   </li>
+  </ul>
  </li>
 </ul>
 
@@ -130,7 +143,7 @@
         <!-- ipynb file if we had a myst markdown file -->
         
         <!-- Download raw file -->
-        <a class="dropdown-buttons" href="_sources/intro.ipynb"><button type="button"
+        <a class="dropdown-buttons" href="_sources/stock_intro.ipynb"><button type="button"
                 class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
                 data-placement="left">.ipynb</button></a>
         <!-- Download PDF via print -->
@@ -159,23 +172,13 @@
         <nav id="bd-toc-nav">
             <ul class="nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#problem-description">
-   Problem Description
+  <a class="reference internal nav-link" href="#cleaning-the-data">
+   Cleaning the Data
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#data-format">
-   Data Format
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#code">
-   Code
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#predictions">
-   Predictions
+  <a class="reference internal nav-link" href="#train-validation-split">
+   Train / Validation Split
   </a>
  </li>
 </ul>
@@ -188,61 +191,136 @@
         
               <div>
                 
-  <div class="cell docutils container">
+  <div class="section" id="data-description">
+<h1>Data Description<a class="headerlink" href="#data-description" title="Permalink to this headline">¶</a></h1>
+<p>In the following I will present my model for the stock data set. Before I could fit my final model I had to transform the data. Next I will discuss how I changed the data structure and how I split the data intro training and validation parts.</p>
+<div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
-
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-
-<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span>
-<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">FileLink</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
 <span class="n">ROOT</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span><span class="o">.</span><span class="n">parent</span>
 </pre></div>
 </div>
 </div>
 </div>
-<div class="section" id="introduction">
-<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
-<p><em><strong>Topics in Econometrics and Statistics, University of Bonn, 2020 – Prof. Joachim Freyberger</strong></em></p>
-<p>In this document I present my submission to the project for the topics class in
-econometrics and statistics, due by 13th September 2020.</p>
-<div class="section" id="problem-description">
-<h2>Problem Description<a class="headerlink" href="#problem-description" title="Permalink to this headline">¶</a></h2>
-<p>For the project we have been given a simulated data set and a real data set. For each
-data set some of the observed outcomes are held back. The task is to build a model for
-each data set on the training set and submit the predictions on the test set.</p>
-<p>The following part of this document is structured as follows. At the end of this
-section I present a link to my predictions for the respective data sets. In the next
-chapter I present the model for the simulated data set. Aftwards I introduce my model
-for the stock data set.</p>
-</div>
-<div class="section" id="data-format">
-<h2>Data Format<a class="headerlink" href="#data-format" title="Permalink to this headline">¶</a></h2>
-<p>Please note that I changed the file format from an RData file to a <a class="reference external" href="https://parquet.apache.org/">parquet</a> file, as this is not dependent on the specific programming language. If you want to reproduce my results using my code (see below) you need to transform the RData files to parquet files. This can easily be done, for example, with the <a class="reference external" href="https://spark.apache.org/docs/1.6.2/api/R/write.parquet.html">SparkR</a> package for R. For the project to run I expect the two data files to be located in the folder <code class="docutils literal notranslate"><span class="pre">data</span></code> with names <code class="docutils literal notranslate"><span class="pre">simulated_data.parquet</span></code> and <code class="docutils literal notranslate"><span class="pre">stock_data.parquet</span></code>, respectively.</p>
-</div>
-<div class="section" id="code">
-<h2>Code<a class="headerlink" href="#code" title="Permalink to this headline">¶</a></h2>
-<p>In this project I have to sets of code bases. Nearly all of the code presented in the following notebooks is embedded in the notebooks themselves. For the final predictions however, I use Python scripts which are stored <a class="reference external" href="https://github.com/timmens/topics-project/">here</a>. The script <a class="reference external" href="https://github.com/timmens/topics-project/tree/main/codes/build_project.py">build_project.py</a> runs all scripts that are necessary to produce the predictions. If you want to rerun these codes on your computer open your favorite terminal emulator and run the following line by line (I assume you have at least <a class="reference external" href="https://docs.conda.io/en/latest/miniconda.html">miniconda</a> already installed on your system, otherwise read the note below.)</p>
-<div class="highlight-zsh notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/timmens/topics-project.git
-conda env create -f environment.yml
-conda activate topics-project
-<span class="nb">cd</span> codes
-python create_predictions.py
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">ROOT</span> <span class="o">/</span> <span class="s2">&quot;data&quot;</span> <span class="o">/</span> <span class="s2">&quot;stock_data.parquet&quot;</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="mi">5</span><span class="p">,</span> <span class="p">:</span><span class="mi">10</span><span class="p">]</span>
 </pre></div>
 </div>
-<p><em><strong>Note.</strong></em></p>
-<p>It is not necessary to use conda here as long as all the packages that I use are available to the Python interpreter. Conda just provides a very easy way to create a sandbox environment in which all packages will be available without messing with the system.</p>
 </div>
-<div class="section" id="predictions">
-<h2>Predictions<a class="headerlink" href="#predictions" title="Permalink to this headline">¶</a></h2>
-<p>Predictions for the respective data sets are stored on github and can be downloaded here</p>
-<ul class="simple">
-<li><p>Simulated data: <a class="reference external" href="https://rawcdn.githack.com/timmens/topics-project/4045ae9fac293ec2aff62d4d9e6f3f8989f768cb/bld/predictions_simulated.csv">(click here to download)</a></p></li>
-<li><p>Stock data: <a class="reference external" href="https://rawcdn.githack.com/timmens/topics-project/4045ae9fac293ec2aff62d4d9e6f3f8989f768cb/bld/predictions_stock.csv">(click here to download)</a></p></li>
-</ul>
-<div class="toctree-wrapper compound">
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>date</th>
+      <th>Y</th>
+      <th>a2me</th>
+      <th>aoa</th>
+      <th>at</th>
+      <th>at_adj</th>
+      <th>ato</th>
+      <th>beme</th>
+      <th>beme_adj</th>
+      <th>beta</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1965-01-31</td>
+      <td>0.461364</td>
+      <td>0.513089</td>
+      <td>0.282723</td>
+      <td>0.787958</td>
+      <td>0.319372</td>
+      <td>0.172775</td>
+      <td>0.484293</td>
+      <td>0.609948</td>
+      <td>0.335079</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1965-01-31</td>
+      <td>0.542868</td>
+      <td>0.240838</td>
+      <td>0.774869</td>
+      <td>0.939791</td>
+      <td>0.340314</td>
+      <td>0.183246</td>
+      <td>0.232984</td>
+      <td>0.308901</td>
+      <td>0.526178</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1965-01-31</td>
+      <td>0.249849</td>
+      <td>0.633508</td>
+      <td>0.096859</td>
+      <td>0.222513</td>
+      <td>0.884817</td>
+      <td>0.785340</td>
+      <td>0.774869</td>
+      <td>0.787958</td>
+      <td>0.853403</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1965-01-31</td>
+      <td>0.371568</td>
+      <td>0.439791</td>
+      <td>0.463351</td>
+      <td>0.903141</td>
+      <td>0.434555</td>
+      <td>0.112565</td>
+      <td>0.494764</td>
+      <td>0.643979</td>
+      <td>0.570681</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1965-01-31</td>
+      <td>-0.177803</td>
+      <td>0.654450</td>
+      <td>0.335079</td>
+      <td>0.704188</td>
+      <td>0.958115</td>
+      <td>0.848168</td>
+      <td>0.549738</td>
+      <td>0.793194</td>
+      <td>0.866492</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
 </div>
+<p>The original data set contains 1_629_155 observations of stock returns including 63 features. One of these features is the date. In comparison to classical panel data, however, the above data does not have a unit index. That is, we cannot know which units move between time periods. Observations are measured from the 01.31.1965 until the 31.05.2014. Again, as in the simulated case, testing observations are given a <code class="docutils literal notranslate"><span class="pre">NaN</span></code> in the outcome column. Here the testing observations are all observations starting from the 31.01.2004 until the last observed time period.</p>
+<div class="section" id="cleaning-the-data">
+<h2>Cleaning the Data<a class="headerlink" href="#cleaning-the-data" title="Permalink to this headline">¶</a></h2>
+<p>Before training my models on the data I cleaned it in several ways. First of all I transformed the date column to a year column. I then dropped all observations older than 1990. And at last I dropped all observations which had absolute stock returns greater than 6. The data cleaning script can be found here <a class="reference external" href="https://github.com/timmens/topics-project/blob/main/codes/clean_data.py">clean_data.py</a>.</p>
+</div>
+<div class="section" id="train-validation-split">
+<h2>Train / Validation Split<a class="headerlink" href="#train-validation-split" title="Permalink to this headline">¶</a></h2>
+<p>As I did not want to ignore the time dimension for the train / validation split I constructed the respective sets as follows. I grouped the cleaned data set into smaller sets by year. For each year I split the smaller set into 80% training and 20% validation set. Lastly I concatened the smaller sets together to form the final training and validation sets. Using this strategy I can train my model on all time-periods and evaluate the performance on all time-periods. The specific implementation is given in the script <a class="reference external" href="https://github.com/timmens/topics-project/blob/main/codes/train_test_split.py">train_test_split.py</a>.</p>
 </div>
 </div>
 
@@ -274,7 +352,8 @@ python create_predictions.py
     
     <div class='prev-next-bottom'>
         
-    <a class='right-next' id="next-link" href="simulated.html" title="next page">Simulated Data</a>
+    <a class='left-prev' id="prev-link" href="stock.html" title="previous page">Stock Data</a>
+    <a class='right-next' id="next-link" href="stock_final.html" title="next page">Final</a>
 
     </div>
     <footer class="footer mt-5 mt-md-0">

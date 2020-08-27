@@ -40,7 +40,7 @@ sns.set_context("notebook", font_scale=1.5, rc={"lines.linewidth": 2.5})
 sns.set_palette(sns.color_palette(colors))
 sns.set_style("whitegrid")
 
-df = pd.read_parquet(ROOT / "data" / "train-simulated.parquet")
+df = pd.read_parquet(ROOT / "bld" / "train_simulated.parquet")
 X = df.drop("Y", axis=1)
 y = df["Y"]
 
@@ -62,7 +62,7 @@ Sigma = matern_kernel(x)
 
 shared.correlation_heatmap(corr=Sigma)
 
-#### Simulation?
+### Simulation?
 
 But how can we generate _uniform_ distributed data with such a correlation structure?
 
@@ -93,7 +93,7 @@ And checking that each column is really uniform distributed by considering a his
 
 for col in ["X3", "X12", "X37"]:
     sns.distplot(
-        XX[col],
+        XX[col], 
         bins=50,
         norm_hist=True,
         kde=False,
@@ -157,13 +157,13 @@ If this is the case it only remains to find these few relevant features, which w
 
 ### Quantitative Analysis
 
-To get a more quantatitive understanding of which features matter we will
+To get a more quantatitive understanding of which features matter we will 
 
 1. Fit a regularized linear model (first-degree, second-degree) using the Lasso and disregard features with zero-coefficient
 2. Use a recursive feature elimination with cross-validation
 3. Fit an third-degree ridge regression for each feature dimension and compare
-
-
+    
+    
 I wont dive too deep into each approach as in the end I decided to pusue a very different route. For each approach one can imagine fitting an unregularized model on the subset of selected features in a second stage. Nevertheless the results from below convinced me that the main effects in the data are sparse, which led me to choose hyperparameters in my final machine learning model that perform better under sparsity.
 
 #### The Lasso Approach
@@ -263,7 +263,7 @@ df_coef = pd.DataFrame(
 for i, col in enumerate(X):
     coefs = get_ridge_coefs(X[[col]], y, order=order)
     df_coef.loc[i+1, :] = coefs
-
+    
 df_coef[df_coef.abs() < threshold] = 0
 
 df_coef = df_coef.rename_axis(

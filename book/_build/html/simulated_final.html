@@ -39,7 +39,7 @@
     <script async="async" src="_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Content in Jupyter Book" href="content.html" />
+    <link rel="next" title="Stock Data" href="stock.html" />
     <link rel="prev" title="Reverse Engineering" href="simulated_reverse_engineering.html" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -49,19 +49,19 @@
 
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
-
+    
 
     <div class="container-xl">
       <div class="row">
-
+          
 <div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
-
+    
         <div class="navbar-brand-box">
 <a class="navbar-brand text-wrap" href="index.html">
-
-
+  
+  
   <h1 class="site-logo" id="site-title">Topics in Econometrics and Statistics</h1>
-
+  
 </a>
 </div>
 
@@ -102,8 +102,8 @@
   </ul>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="content.html">
-   Content in Jupyter Book
+  <a class="reference internal" href="stock.html">
+   Stock Data
   </a>
  </li>
 </ul>
@@ -119,17 +119,17 @@
 </div>
 
 
+          
 
 
-
-
+          
 <main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
-
+    
     <div class="row topbar fixed-top container-xl">
     <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show">
     </div>
     <div class="col pl-2 topbar-main">
-
+        
         <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
             data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
             aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
@@ -138,15 +138,15 @@
             <i class="fas fa-arrow-left"></i>
             <i class="fas fa-arrow-up"></i>
         </button>
-
+        
         <div class="dropdown-buttons-trigger">
     <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
             class="fas fa-download"></i></button>
 
-
+    
     <div class="dropdown-buttons">
         <!-- ipynb file if we had a myst markdown file -->
-
+        
         <!-- Download raw file -->
         <a class="dropdown-buttons" href="_sources/simulated_final.ipynb"><button type="button"
                 class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
@@ -155,7 +155,7 @@
         <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
             onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
     </div>
-
+    
 </div>
         <!-- Source interaction buttons -->
 
@@ -229,9 +229,9 @@
 </div>
     <div id="main-content" class="row">
         <div class="col-12 col-md-9 pl-md-3 pr-md-0">
-
+        
               <div>
-
+                
   <div class="section" id="final">
 <h1>Final<a class="headerlink" href="#final" title="Permalink to this headline">¶</a></h1>
 <p>In this last section I will list my top four models and their respective performances on a validation set. However, only for my final model I will explain how the fitting procedure works in detail.</p>
@@ -269,14 +269,15 @@
 <span class="kn">from</span> <span class="nn">catboost</span> <span class="kn">import</span> <span class="n">CatBoostRegressor</span>
 
 <span class="n">ROOT</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span><span class="o">.</span><span class="n">parent</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">df_train</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">ROOT</span> <span class="o">/</span> <span class="s2">&quot;data&quot;</span> <span class="o">/</span> <span class="s2">&quot;train-simulated.parquet&quot;</span><span class="p">)</span>
-<span class="n">df_val</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">ROOT</span> <span class="o">/</span> <span class="s2">&quot;data&quot;</span> <span class="o">/</span> <span class="s2">&quot;validate-simulated.parquet&quot;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">df_train</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">ROOT</span> <span class="o">/</span> <span class="s2">&quot;bld&quot;</span> <span class="o">/</span> <span class="s2">&quot;train_simulated.parquet&quot;</span><span class="p">)</span>
+<span class="n">df_val</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">ROOT</span> <span class="o">/</span> <span class="s2">&quot;bld&quot;</span> <span class="o">/</span> <span class="s2">&quot;validate_simulated.parquet&quot;</span><span class="p">)</span>
 
 <span class="n">y_train</span> <span class="o">=</span> <span class="n">df_train</span><span class="p">[</span><span class="s2">&quot;Y&quot;</span><span class="p">]</span>
 <span class="n">X_train</span> <span class="o">=</span> <span class="n">df_train</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;Y&quot;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
@@ -312,7 +313,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-none notranslate"><div class="highlight"><pre><span></span>(Linear Model) MSE: 5.348907824317463
+<div class="output stream highlight-none notranslate"><div class="highlight"><pre><span></span>(Linear Model) MSE: 5.361621926612066
 </pre></div>
 </div>
 </div>
@@ -320,7 +321,7 @@
 </div>
 <div class="section" id="deep-neural-network-with-dropout-regularization">
 <h2>2. Deep Neural Network with Dropout Regularization<a class="headerlink" href="#deep-neural-network-with-dropout-regularization" title="Permalink to this headline">¶</a></h2>
-<p>I fit a deep neural network using the popular <a class="reference external" href="https://keras.io/">keras</a> library which provides an intuitive API for the powerful <a class="reference external" href="https://www.tensorflow.org/">tensorflow</a> package. The neural network architecture is set using the <code class="docutils literal notranslate"><span class="pre">build_regressor</span></code> function. I choose an archtecture with 10 layers. For the first layer I choose 20 hidden nodes, 15 hidden nodes for the second layer and 10 hidden nodes for the third to tenth layer. Moreover I use the so called <a class="reference external" href="https://en.wikipedia.org/wiki/Rectifier_(neural_networks)">ReLu</a> activation function, which has been proven to outperform the classic sigmoid activation function in several ways, see for example <a class="reference external" href="https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf">Krizhevsky et al. 2012</a>. As overfitting is a big problem with deep networks I employ a popular technique called dropout regularization to mitigate this effect, see <a class="reference external" href="https://jmlr.org/papers/volume15/srivastava14a/srivastava14a.pdf">Srivastava et al. 2014</a>. Dropout leads to neurons in a layer being randomly deactivated for a single epoch during the backpropagation, which in turn leads to neighboring neurons not developing a relationship that is too strongly dependent, which in turn is said to mitigate overfitting.</p>
+<p>I fit a deep neural network using the popular <a class="reference external" href="https://keras.io/">keras</a> library which provides an intuitive API for the powerful <a class="reference external" href="https://www.tensorflow.org/">tensorflow</a> package. The neural network architecture is set using the <code class="docutils literal notranslate"><span class="pre">build_regressor</span></code> function. I choose an archtecture with 7 layers. For the first layer I choose 50 hidden nodes, 25 hidden nodes for the second layer and 10 hidden nodes for the third to seventh layer. Moreover I use the so called <a class="reference external" href="https://en.wikipedia.org/wiki/Rectifier_(neural_networks)">ReLu</a> activation function, which has been proven to outperform the classic sigmoid activation function in several ways, see for example <a class="reference external" href="https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf">Krizhevsky et al. 2012</a>. As overfitting is a big problem with deep networks I employ a popular technique called dropout regularization to mitigate this effect, see <a class="reference external" href="https://jmlr.org/papers/volume15/srivastava14a/srivastava14a.pdf">Srivastava et al. 2014</a>. Dropout leads to neurons in a layer being randomly deactivated for a single epoch during the backpropagation, which in turn leads to neighboring neurons not developing a relationship that is too strongly dependent, which in turn is said to mitigate overfitting.</p>
 <p><em><strong>Note.</strong></em></p>
 <p>I decide to use this specific architecture as I “learned” from the previous section that the main effects are sparse in the sense that only very few features are relevant. However, I also realized from playing around with some parameters and the validation error of the linear model that some effects must be highly non-linear. An architecture which reduces the nodes from the original 100 input dimensions to 50, then 25 and then 10 forces the network to select the relevant features. And by using the other additional 5 layers the network can find non-linear signals.</p>
 <p><em><strong>Remark.</strong></em></p>
@@ -333,18 +334,18 @@
     <span class="c1"># first hidden layer</span>
     <span class="n">regressor</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="n">units</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s2">&quot;relu&quot;</span><span class="p">,</span> <span class="n">input_dim</span><span class="o">=</span><span class="n">N_COL</span><span class="p">))</span>
     <span class="n">regressor</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dropout</span><span class="p">(</span><span class="mf">0.2</span><span class="p">))</span>
-
+    
     <span class="c1"># second hidden layer</span>
     <span class="n">regressor</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="n">units</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s2">&quot;relu&quot;</span><span class="p">))</span>
     <span class="n">regressor</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dropout</span><span class="p">(</span><span class="mf">0.2</span><span class="p">))</span>
-
+    
     <span class="c1"># third to tenth hidden layer</span>
     <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
         <span class="n">regressor</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="n">units</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s2">&quot;relu&quot;</span><span class="p">))</span>
-
+    
     <span class="c1"># output layer</span>
     <span class="n">regressor</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="n">units</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">))</span>
-
+    
     <span class="c1"># compile model</span>
     <span class="n">regressor</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">optimizer</span><span class="o">=</span><span class="s2">&quot;adam&quot;</span><span class="p">,</span> <span class="n">loss</span><span class="o">=</span><span class="s2">&quot;mean_squared_error&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">regressor</span>
@@ -366,7 +367,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-none notranslate"><div class="highlight"><pre><span></span>(Neural Network) MSE: 5.27349630714567
+<div class="output stream highlight-none notranslate"><div class="highlight"><pre><span></span>(Neural Network) MSE: 5.23282478125259
 </pre></div>
 </div>
 </div>
@@ -379,17 +380,18 @@
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rf</span> <span class="o">=</span> <span class="n">RandomForestRegressor</span><span class="p">(</span>
-    <span class="n">n_estimators</span><span class="o">=</span><span class="mi">250</span><span class="p">,</span>
-    <span class="n">max_features</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
+    <span class="n">n_estimators</span><span class="o">=</span><span class="mi">250</span><span class="p">,</span> 
+    <span class="n">max_features</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> 
     <span class="n">max_depth</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
     <span class="n">min_samples_leaf</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
     <span class="n">bootstrap</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">n_jobs</span><span class="o">=</span><span class="mi">3</span>
+    <span class="n">n_jobs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">rf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
 
 <span class="n">std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span>
-    <span class="p">[</span><span class="n">tree</span><span class="o">.</span><span class="n">feature_importances_</span> <span class="k">for</span> <span class="n">tree</span> <span class="ow">in</span> <span class="n">rf</span><span class="o">.</span><span class="n">estimators_</span><span class="p">],</span>
+    <span class="p">[</span><span class="n">tree</span><span class="o">.</span><span class="n">feature_importances_</span> <span class="k">for</span> <span class="n">tree</span> <span class="ow">in</span> <span class="n">rf</span><span class="o">.</span><span class="n">estimators_</span><span class="p">],</span> 
     <span class="n">axis</span><span class="o">=</span><span class="mi">0</span>
 <span class="p">)</span>
 <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">rf</span><span class="o">.</span><span class="n">feature_importances_</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
@@ -402,7 +404,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-none notranslate"><div class="highlight"><pre><span></span>First stage MSE: 5.159945089712634
+<div class="output stream highlight-none notranslate"><div class="highlight"><pre><span></span>First stage MSE: 5.1615609346407565
 </pre></div>
 </div>
 </div>
@@ -410,7 +412,7 @@
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># plotting code: can be safely ignored</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;font.size&#39;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span> <span class="s1">&#39;figure.figsize&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">)})</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;font.size&#39;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span> <span class="s1">&#39;figure.figsize&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">6</span><span class="p">)})</span>
 <span class="n">cut</span> <span class="o">=</span> <span class="mi">40</span>
 <span class="n">x</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">X_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])[:</span><span class="n">cut</span><span class="p">]</span>
 <span class="n">y</span> <span class="o">=</span> <span class="n">rf</span><span class="o">.</span><span class="n">feature_importances_</span><span class="p">[</span><span class="n">indices</span><span class="p">][:</span><span class="n">cut</span><span class="p">]</span>
@@ -434,12 +436,13 @@
 <span class="n">XX_val</span> <span class="o">=</span> <span class="n">X_val</span><span class="p">[</span><span class="n">relevant</span><span class="p">]</span>
 
 <span class="n">rf</span> <span class="o">=</span> <span class="n">RandomForestRegressor</span><span class="p">(</span>
-    <span class="n">n_estimators</span><span class="o">=</span><span class="mi">250</span><span class="p">,</span>
-    <span class="n">max_features</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
+    <span class="n">n_estimators</span><span class="o">=</span><span class="mi">250</span><span class="p">,</span> 
+    <span class="n">max_features</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> 
     <span class="n">max_depth</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
     <span class="n">min_samples_leaf</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
     <span class="n">bootstrap</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">n_jobs</span><span class="o">=</span><span class="mi">3</span>
+    <span class="n">n_jobs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">rf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">XX_train</span><span class="p">,</span> <span class="n">y_train</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
 
@@ -450,7 +453,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-none notranslate"><div class="highlight"><pre><span></span>(Random Forest) MSE: 5.109283286278805
+<div class="output stream highlight-none notranslate"><div class="highlight"><pre><span></span>(Random Forest) MSE: 5.120511556417796
 </pre></div>
 </div>
 </div>
@@ -469,7 +472,7 @@
 <div class="cell_input docutils container">
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">gbt</span> <span class="o">=</span> <span class="n">CatBoostRegressor</span><span class="p">(</span>
     <span class="n">iterations</span><span class="o">=</span><span class="mi">1500</span><span class="p">,</span>
-    <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+    <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> 
     <span class="n">depth</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
     <span class="n">loss_function</span><span class="o">=</span><span class="s2">&quot;RMSE&quot;</span><span class="p">,</span>
     <span class="n">random_state</span><span class="o">=</span><span class="mi">1</span>
@@ -483,7 +486,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-none notranslate"><div class="highlight"><pre><span></span>(Catboost) MSE: 5.04103841680727
+<div class="output stream highlight-none notranslate"><div class="highlight"><pre><span></span>(Catboost) MSE: 5.048105271497743
 </pre></div>
 </div>
 </div>
@@ -532,23 +535,23 @@
     <script>kernelName = 'python3'</script>
 
               </div>
-
+              
         </div>
     </div>
-
-
+    
+    
     <div class='prev-next-bottom'>
-
+        
     <a class='left-prev' id="prev-link" href="simulated_reverse_engineering.html" title="previous page">Reverse Engineering</a>
-    <a class='right-next' id="next-link" href="content.html" title="next page">Content in Jupyter Book</a>
+    <a class='right-next' id="next-link" href="stock.html" title="next page">Stock Data</a>
 
     </div>
     <footer class="footer mt-5 mt-md-0">
     <div class="container">
       <p>
-
+        
           By Tim Mensinger<br/>
-
+        
             &copy; Copyright 2020.<br/>
       </p>
     </div>
@@ -560,6 +563,6 @@
     </div>
 
     <script src="_static/js/index.js"></script>
-
+    
   </body>
 </html>

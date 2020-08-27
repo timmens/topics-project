@@ -49,19 +49,19 @@
 
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
-
+    
 
     <div class="container-xl">
       <div class="row">
-
+          
 <div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
-
+    
         <div class="navbar-brand-box">
 <a class="navbar-brand text-wrap" href="index.html">
-
-
+  
+  
   <h1 class="site-logo" id="site-title">Topics in Econometrics and Statistics</h1>
-
+  
 </a>
 </div>
 
@@ -102,8 +102,8 @@
   </ul>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="content.html">
-   Content in Jupyter Book
+  <a class="reference internal" href="stock.html">
+   Stock Data
   </a>
  </li>
 </ul>
@@ -119,17 +119,17 @@
 </div>
 
 
+          
 
 
-
-
+          
 <main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
-
+    
     <div class="row topbar fixed-top container-xl">
     <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show">
     </div>
     <div class="col pl-2 topbar-main">
-
+        
         <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
             data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
             aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
@@ -138,15 +138,15 @@
             <i class="fas fa-arrow-left"></i>
             <i class="fas fa-arrow-up"></i>
         </button>
-
+        
         <div class="dropdown-buttons-trigger">
     <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
             class="fas fa-download"></i></button>
 
-
+    
     <div class="dropdown-buttons">
         <!-- ipynb file if we had a myst markdown file -->
-
+        
         <!-- Download raw file -->
         <a class="dropdown-buttons" href="_sources/simulated_reverse_engineering.ipynb"><button type="button"
                 class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
@@ -155,7 +155,7 @@
         <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
             onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
     </div>
-
+    
 </div>
         <!-- Source interaction buttons -->
 
@@ -244,9 +244,9 @@
 </div>
     <div id="main-content" class="row">
         <div class="col-12 col-md-9 pl-md-3 pr-md-0">
-
+        
               <div>
-
+                
   <div class="section" id="reverse-engineering">
 <h1>Reverse Engineering<a class="headerlink" href="#reverse-engineering" title="Permalink to this headline">¶</a></h1>
 <p>In the following I will present a few things I learned about the data through “<em>reverse data engineering</em>”. The main idea was to learn enough of the underlying process to be able to propose simple models from which I could simulate data, which in turn I could compare to the observed data to test the fit. Unfortunately however, in the end I did not learn enough to beat my final black-box algorithms in terms of prediction on the validation set, which is why I did not pursue this path any further. Nevertheless the insights made here can still be interesting. If, however, you wish to jump right to the final model please skip this section. Note also that in this section we only work with the pure training data.</p>
@@ -295,7 +295,7 @@
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">ROOT</span> <span class="o">/</span> <span class="s2">&quot;data&quot;</span> <span class="o">/</span> <span class="s2">&quot;train-simulated.parquet&quot;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">ROOT</span> <span class="o">/</span> <span class="s2">&quot;bld&quot;</span> <span class="o">/</span> <span class="s2">&quot;train_simulated.parquet&quot;</span><span class="p">)</span>
 <span class="n">X</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;Y&quot;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">y</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;Y&quot;</span><span class="p">]</span>
 </pre></div>
@@ -370,7 +370,7 @@ If we assume that the individual entries <span class="math notranslate nohighlig
 <div class="cell_input docutils container">
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;X3&quot;</span><span class="p">,</span> <span class="s2">&quot;X12&quot;</span><span class="p">,</span> <span class="s2">&quot;X37&quot;</span><span class="p">]:</span>
     <span class="n">sns</span><span class="o">.</span><span class="n">distplot</span><span class="p">(</span>
-        <span class="n">XX</span><span class="p">[</span><span class="n">col</span><span class="p">],</span>
+        <span class="n">XX</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> 
         <span class="n">bins</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
         <span class="n">norm_hist</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">kde</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
@@ -481,7 +481,7 @@ If this is the case it only remains to find these few relevant features, which w
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-none notranslate"><div class="highlight"><pre><span></span>Relevant features chosen via Lasso: [&#39;X3&#39;, &#39;X12&#39;, &#39;X13&#39;, &#39;X14&#39;, &#39;X37&#39;, &#39;X38&#39;, &#39;X39&#39;, &#39;X44&#39;]
+<div class="output stream highlight-none notranslate"><div class="highlight"><pre><span></span>Relevant features chosen via Lasso: [&#39;X3&#39;, &#39;X12&#39;, &#39;X14&#39;, &#39;X37&#39;, &#39;X38&#39;, &#39;X39&#39;, &#39;X40&#39;]
 </pre></div>
 </div>
 </div>
@@ -534,7 +534,7 @@ If this is the case it only remains to find these few relevant features, which w
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-none notranslate"><div class="highlight"><pre><span></span>Relevant features chosen via Lasso: [&#39;X3&#39;, &#39;X5&#39;, &#39;X37&#39;, &#39;X38&#39;, &#39;X57&#39;, &#39;X92&#39;, &#39;X3:X5&#39;, &#39;X3:X12&#39;, &#39;X3:X57&#39;, &#39;X3:X90&#39;, &#39;X5:X9&#39;, &#39;X9:X12&#39;, &#39;X12^2&#39;, &#39;X12:X14&#39;, &#39;X35^2&#39;, &#39;X38:X39&#39;, &#39;X38:X40&#39;, &#39;X38:X47&#39;, &#39;X38:X57&#39;, &#39;X38:X92&#39;, &#39;X38:X93&#39;, &#39;X38:X94&#39;, &#39;X39^2&#39;, &#39;X90^2&#39;]
+<div class="output stream highlight-none notranslate"><div class="highlight"><pre><span></span>Relevant features chosen via Lasso: [&#39;X3&#39;, &#39;X5&#39;, &#39;X37&#39;, &#39;X38&#39;, &#39;X57&#39;, &#39;X92&#39;, &#39;X2:X12&#39;, &#39;X3:X4&#39;, &#39;X3:X5&#39;, &#39;X3:X12&#39;, &#39;X3:X57&#39;, &#39;X5:X9&#39;, &#39;X5:X92&#39;, &#39;X5:X99&#39;, &#39;X7:X12&#39;, &#39;X9:X12&#39;, &#39;X12^2&#39;, &#39;X12:X14&#39;, &#39;X38^2&#39;, &#39;X38:X39&#39;, &#39;X38:X40&#39;, &#39;X38:X57&#39;, &#39;X38:X92&#39;]
 </pre></div>
 </div>
 </div>
@@ -627,7 +627,7 @@ If this is the case it only remains to find these few relevant features, which w
 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
     <span class="n">coefs</span> <span class="o">=</span> <span class="n">get_ridge_coefs</span><span class="p">(</span><span class="n">X</span><span class="p">[[</span><span class="n">col</span><span class="p">]],</span> <span class="n">y</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">)</span>
     <span class="n">df_coef</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">coefs</span>
-
+    
 <span class="n">df_coef</span><span class="p">[</span><span class="n">df_coef</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">threshold</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 
 <span class="n">df_coef</span> <span class="o">=</span> <span class="n">df_coef</span><span class="o">.</span><span class="n">rename_axis</span><span class="p">(</span>
@@ -691,13 +691,13 @@ If this is the case it only remains to find these few relevant features, which w
     <script>kernelName = 'python3'</script>
 
               </div>
-
+              
         </div>
     </div>
-
-
+    
+    
     <div class='prev-next-bottom'>
-
+        
     <a class='left-prev' id="prev-link" href="simulated_intro.html" title="previous page">Data Description</a>
     <a class='right-next' id="next-link" href="simulated_final.html" title="next page">Final</a>
 
@@ -705,9 +705,9 @@ If this is the case it only remains to find these few relevant features, which w
     <footer class="footer mt-5 mt-md-0">
     <div class="container">
       <p>
-
+        
           By Tim Mensinger<br/>
-
+        
             &copy; Copyright 2020.<br/>
       </p>
     </div>
@@ -719,6 +719,6 @@ If this is the case it only remains to find these few relevant features, which w
     </div>
 
     <script src="_static/js/index.js"></script>
-
+    
   </body>
 </html>
