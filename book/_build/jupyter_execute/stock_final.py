@@ -23,8 +23,6 @@ from sklearn.linear_model import LinearRegression
 from sklearn.linear_model import LassoCV
 from sklearn.metrics import mean_squared_error
 
-from catboost import CatBoostRegressor
-
 ROOT = Path(os.getcwd()).parent
 
 df_train = pd.read_parquet(ROOT / "bld" / "train_stock.parquet")
