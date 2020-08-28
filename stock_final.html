@@ -270,7 +270,7 @@
 </div>
 <div class="section" id="two-stage-linear-model-final-model">
 <h2>2. Two-stage Linear Model (<em>final model</em>)<a class="headerlink" href="#two-stage-linear-model-final-model" title="Permalink to this headline">¶</a></h2>
-<p>To mix things up, here I select features using a Lasso approach. With these features I then fit a simple 2nd degree polynomial model. The code which I used to construct the final predictions can be found in the script <a class="reference external" href="https://github.com/timmens/topics-project/blob/main/codes/final_predictions.py">final_predictions.py</a>.</p>
+<p>To mix things up, here I select features using a Lasso approach. With these features I then fit a simple 2nd degree polynomial model. The code which I used to construct the final predictions can be found in the script <a class="reference external" href="https://github.com/timmens/topics-project/blob/main/codes/final_prediction.py">final_prediction.py</a>.</p>
 <p><em><strong>Lasso feature selection</strong></em></p>
 <p>The regularization parameter is selected via a 5-fold cross-validation procedure over a logspace grid (a sequence which is linear on a logarithmic scale). I select all columns which have nonzero coefficients.</p>
 <div class="cell docutils container">
