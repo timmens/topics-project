@@ -49,7 +49,7 @@ print(f"(Linear Model) MSE: {mse_lm}")
 
 ## 2. Two-stage Linear Model (*final model*)
 
-To mix things up, here I select features using a Lasso approach. With these features I then fit a simple 2nd degree polynomial model. The code which I used to construct the final predictions can be found in the script [final_predictions.py](https://github.com/timmens/topics-project/blob/main/codes/final_predictions.py).
+To mix things up, here I select features using a Lasso approach. With these features I then fit a simple 2nd degree polynomial model. The code which I used to construct the final predictions can be found in the script [final_prediction.py](https://github.com/timmens/topics-project/blob/main/codes/final_prediction.py).
 
 ***Lasso feature selection***
 

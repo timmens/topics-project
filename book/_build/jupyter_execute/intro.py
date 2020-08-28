@@ -34,12 +34,12 @@ Please note that I changed the file format from an RData file to a [parquet](htt
 
 In this project I have to sets of code bases. Nearly all of the code presented in the following notebooks is embedded in the notebooks themselves. For the final predictions however, I use Python scripts which are stored [here](https://github.com/timmens/topics-project/). The script [build_project.py](https://github.com/timmens/topics-project/tree/main/codes/build_project.py) runs all scripts that are necessary to produce the predictions. If you want to rerun these codes on your computer open your favorite terminal emulator and run the following line by line (I assume you have at least [miniconda](https://docs.conda.io/en/latest/miniconda.html) already installed on your system, otherwise read the note below.)
 
-```zsh
-git clone https://github.com/timmens/topics-project.git
-conda env create -f environment.yml
-conda activate topics-project
-cd codes
-python create_predictions.py
+```console
+$ git clone https://github.com/timmens/topics-project.git
+$ conda env create -f environment.yml
+$ conda activate topics-project
+$ cd codes
+$ python build_project.py
 ```
 
 ***Note.***

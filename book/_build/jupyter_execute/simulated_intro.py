@@ -15,7 +15,7 @@ The data set consists of 100_000 observations of a single continuous outcome and
 ## Train / Validation Split
 
 The remaining 80_000 *labelled* data points were (randomly) split further by me into 65_000 (81.25%) training points and 15_000 validation points. As is standard in the literature I will train all of my models on the training points and compare the performance on the validation points. The *best* model overall is trained on all 80_000 points and used to predict the outcomes on the test set.
-This splitting procedure is implemented in the script [train_test_split.py](https://github.com/timmens/topics-project/blob/main/train_test_split.py).
+This splitting procedure is implemented in the script [train_test_split.py](https://github.com/timmens/topics-project/blob/main/codes/train_test_split.py).
 
 ## Next Up
 

@@ -171,7 +171,7 @@ print(f"(Random Forest) MSE: {mse_rf}")
 
 ## 4. Gradient tree boosting (*the final model*)
 
-The final model I am using is a specific variant of a gradient boosted tree. In particular the version implemented in the [catboost](https://catboost.ai/) package, which differs slightly from common implementations. Next I will introduce the concept of gradient boosting with a particular focus on tree weak-learners. Afterwards I show how to fit a model using ``catboost``. Note that my final prediction submissions are not made with this specific model since here I only use my training sample. The final predictions are made with the script [final_prediction_simulated.py](https://github.com/timmens/topics-project/tree/main/codes/create_predictions.py).
+The final model I am using is a specific variant of a gradient boosted tree. In particular the version implemented in the [catboost](https://catboost.ai/) package, which differs slightly from common implementations. Next I will introduce the concept of gradient boosting with a particular focus on tree weak-learners. Afterwards I show how to fit a model using ``catboost``. Note that my final prediction submissions are not made with this specific model since here I only use my training sample. The final predictions are made with the script [final_prediction.py](https://github.com/timmens/topics-project/blob/main/codes/final_prediction.py).
 
 
 ### Theory
