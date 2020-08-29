@@ -239,15 +239,15 @@
                 
   <div class="section" id="final">
 <h1>Final<a class="headerlink" href="#final" title="Permalink to this headline">¶</a></h1>
-<p>In this last section I will list my top four models and their respective performances on a validation set. However, only for my final model I will explain how the fitting procedure works in detail.</p>
-<p>In particular I consider a</p>
+<p>In this last section I will list my top four models and their respective performances on a validation set. Please note that only for my final model I will explain how the fitting procedure works in detail.</p>
+<p>I consider a</p>
 <ol class="simple">
 <li><p>Linear model using a subset of features</p></li>
 <li><p>Deep neural network with dropout regularization</p></li>
 <li><p>Two-stage random forest with feature selection</p></li>
 <li><p>Gradient tree boosting (<em>the final model</em>)</p></li>
 </ol>
-<p>If you only care about the final model please jump directly to subsection 4, in which I explain how the model is fit on a theoretical basis as well as the (Python) implementation. Note also that in the very last subsection I include a table comparing the validation mean squared error for all of the presented models.</p>
+<p>If you only care about the final model please jump directly to subsection 4, in which I explain how the model is fit on a theoretical basis as well as how to implement it in Python. Note also that in the very last subsection I include a table comparing the validation mean squared error for all of the presented models.</p>
 <div class="section" id="preliminaries">
 <h2>Preliminaries<a class="headerlink" href="#preliminaries" title="Permalink to this headline">¶</a></h2>
 <div class="cell docutils container">
@@ -296,7 +296,7 @@
 </div>
 <div class="section" id="linear-model-using-a-subset-of-features">
 <h2>1. Linear Model Using a Subset of Features<a class="headerlink" href="#linear-model-using-a-subset-of-features" title="Permalink to this headline">¶</a></h2>
-<p>Here I fit a simple “two-step” 3rd degree polynomial regression model to benchmark the machine learning methods from below. The procedure has two steps as I only consider the features <span class="math notranslate nohighlight">\(\{X_3, X_{12}, X_{38}\}\)</span>. This set of features was selected in the previous section using the recursive feature elimination strategy. However, basically all other feature selection strategies considered in the previous section selected a similar set of features.</p>
+<p>Here I fit a simple two-step 3rd degree polynomial regression model to benchmark the machine learning methods from below. The procedure has two steps as I only consider the features <span class="math notranslate nohighlight">\(\{X_3, X_{12}, X_{38}\}\)</span>. This set of features was selected in the previous section using the recursive feature elimination strategy. However, basically all other feature selection strategies considered in the previous section selected a similar set of features.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">relevant</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;X</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">38</span><span class="p">]]</span>
@@ -326,11 +326,9 @@
 </div>
 <div class="section" id="deep-neural-network-with-dropout-regularization">
 <h2>2. Deep Neural Network with Dropout Regularization<a class="headerlink" href="#deep-neural-network-with-dropout-regularization" title="Permalink to this headline">¶</a></h2>
-<p>I fit a deep neural network using the popular <a class="reference external" href="https://keras.io/">keras</a> library (<a class="bibtex reference internal" href="zreferences.html#keras" id="id1">[C+15]</a>) which provides an intuitive API for the powerful <a class="reference external" href="https://www.tensorflow.org/">tensorflow</a> package (<a class="bibtex reference internal" href="zreferences.html#tensorflow" id="id2">[AAB+15]</a>). The neural network architecture is set using the <code class="docutils literal notranslate"><span class="pre">build_regressor</span></code> function. I choose an archtecture with 7 layers. For the first layer I choose 50 hidden nodes, 25 hidden nodes for the second layer and 10 hidden nodes for the third to seventh layer. Moreover I use the so called <a class="reference external" href="https://en.wikipedia.org/wiki/Rectifier_(neural_networks)">ReLu</a> activation function, which has been proven to outperform the classic sigmoid activation function in several ways, see for example <a class="bibtex reference internal" href="zreferences.html#krizhevsky2017" id="id3">[KSH17]</a>. As overfitting is a big problem with deep networks I employ a popular technique called dropout regularization to mitigate this effect, see <a class="bibtex reference internal" href="zreferences.html#srivastava2014" id="id4">[SHK+14]</a>. Dropout leads to neurons in a layer being randomly deactivated for a single epoch during the backpropagation, which in turn leads to neighboring neurons not developing a relationship that is too strongly dependent, which in turn is said to mitigate overfitting.</p>
-<p><em><strong>Note.</strong></em></p>
-<p>I decide to use this specific architecture as I “learned” from the previous section that the main effects are sparse in the sense that only very few features are relevant. However, I also realized from playing around with some parameters and the validation error of the linear model that some effects must be highly non-linear. An architecture which reduces the nodes from the original 100 input dimensions to 50, then 25 and then 10 forces the network to select the relevant features. And by using the other additional 5 layers the network can find non-linear signals.</p>
-<p><em><strong>Remark.</strong></em></p>
-<p>Since the gradient boosted tree presented below performs so well I did not consider many different architectures. I do believe that the neural networks should be able to perform comparably well if a different architecture is chosen.</p>
+<p>I fit a deep neural network using the popular <a class="reference external" href="https://keras.io/">keras</a> library (<a class="bibtex reference internal" href="zreferences.html#keras" id="id1">[C+15]</a>) which provides an intuitive API for the powerful <a class="reference external" href="https://www.tensorflow.org/">tensorflow</a> package (<a class="bibtex reference internal" href="zreferences.html#tensorflow" id="id2">[AAB+15]</a>). The neural network architecture is set using the <code class="docutils literal notranslate"><span class="pre">build_regressor</span></code> function. I choose an archtecture with 7 layers. For the first layer I choose 50 hidden nodes, for the second layer 25 hidden nodes and for all remaining layers I choose 10 hidden nodes. Moreover I use the so called <a class="reference external" href="https://en.wikipedia.org/wiki/Rectifier_(neural_networks)">ReLu</a> activation function, which has been proven to outperform the classic sigmoid activation function in several ways, see for example <a class="bibtex reference internal" href="zreferences.html#krizhevsky2017" id="id3">[KSH17]</a>. As overfitting is a big problem with deep networks I employ a popular technique called dropout regularization to mitigate this effect, see <a class="bibtex reference internal" href="zreferences.html#srivastava2014" id="id4">[SHK+14]</a>. Dropout leads to neurons in a layer being randomly deactivated for a single epoch during the backpropagation. This avoids neighboring neurons developing a strong dependency, which is said to mitigate overfitting.</p>
+<p><em><strong>Note.</strong></em> I decide to use this specific architecture as I “learned” from the previous section that the main effects are sparse in the sense that most likely only very few features are relevant. However, I also realized from playing around with the linear model while watching the validation error that some effects must be non-linear. An architecture which reduces the nodes from the original 100 input dimensions to 50, then 25 and then 10, forces the network to select relevant features. And by using the additional 5 layers the network can potentially find non-linear signals.</p>
+<p><em><strong>Remark.</strong></em> Since the gradient boosted tree presented below performs so well I did not consider many different architectures. I do believe that the neural networks should be able to perform comparably well if a different architecture is chosen.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">N_COL</span> <span class="o">=</span> <span class="n">X_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
@@ -372,7 +370,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-none notranslate"><div class="highlight"><pre><span></span>(Neural Network) MSE: 5.369156156602011
+<div class="output stream highlight-none notranslate"><div class="highlight"><pre><span></span>(Neural Network) MSE: 5.250671235646458
 </pre></div>
 </div>
 </div>
@@ -380,7 +378,7 @@
 </div>
 <div class="section" id="two-stage-random-forest-with-feature-selection">
 <h2>3. Two-stage Random Forest with Feature Selection<a class="headerlink" href="#two-stage-random-forest-with-feature-selection" title="Permalink to this headline">¶</a></h2>
-<p>In this two stage procedure I first fit a random forest on the full set of features. I then consider a feature importance measure, which can be automatically calculated from the random forest fit. Using this I select the 30 <em>most</em> important features and fit another random forest on this subset of features.</p>
+<p>In this two stage procedure I first fit a random forest on the full set of features. I then consider the standard feature importance measure of random forests, which is automatically calculated from the fitting procedure. Using this I select the 30 <em>most</em> important features and fit another random forest on this subset of features.</p>
 <p><em><strong>First Stage</strong></em></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -466,31 +464,33 @@
 </div>
 <div class="section" id="gradient-tree-boosting-the-final-model">
 <h2>4. Gradient tree boosting (<em>the final model</em>)<a class="headerlink" href="#gradient-tree-boosting-the-final-model" title="Permalink to this headline">¶</a></h2>
-<p>The final model I am using is a specific variant of a gradient boosted tree. The key concepts of this method are equivalent to the seminal paper by Friedman, see <a class="bibtex reference internal" href="zreferences.html#friedman2002" id="id5">[Fri02]</a>. The version I am using is implemented in the <a class="reference external" href="https://catboost.ai/">catboost</a> package, which differs slightly from common other implementations. Next I will introduce the concept of gradient boosting with a particular focus on tree weak-learners. Afterwards I show how to fit a model using <code class="docutils literal notranslate"><span class="pre">catboost</span></code>. Note that my final prediction submissions are not made with this specific model since here I only use my training sample. The final predictions are made with the script <a class="reference external" href="https://github.com/timmens/topics-project/blob/main/codes/final_prediction.py">final_prediction.py</a>.</p>
+<p>The final model I decided to use is a specific variant of a gradient boosted tree. The key concepts of this method are equivalent to the algorithm proposed in the seminal paper by Friedman, see <a class="bibtex reference internal" href="zreferences.html#friedman2002" id="id5">[Fri02]</a>. The version I am using is implemented in the <a class="reference external" href="https://catboost.ai/">catboost</a> package, which differs slightly from common other implementations. Next I will introduce the theoretical concept of gradient boosting with a particular focus on tree weak-learners. Afterwards I show how to fit a model using <code class="docutils literal notranslate"><span class="pre">catboost</span></code>.</p>
+<p><em><strong>Note.</strong></em> My final prediction submissions are made with the exact model specification as presented in below, but using all the data. The corresponding script can be found here <a class="reference external" href="https://github.com/timmens/topics-project/blob/main/codes/final_prediction.py">final_prediction.py</a>.</p>
 <div class="section" id="theory">
 <h3>Theory<a class="headerlink" href="#theory" title="Permalink to this headline">¶</a></h3>
 <p>I will first explain the general idea behind boosting and gradient boosting. Then I show how the general formulas simplify when using (regression) trees as base-learners. At last I illustrate how out-of-sample prediction loss may be improved by using ideas from stochastic gradient descent and regularization.</p>
-<p><strong>Note.</strong> My notation and explaination is guided by <a class="bibtex reference internal" href="zreferences.html#friedman2002" id="id6">[Fri02]</a> and <a class="bibtex reference internal" href="zreferences.html#esl2001" id="id7">[HTF01]</a>.</p>
+<p><em><strong>Note.</strong></em> My notation and explaination is guided by <a class="bibtex reference internal" href="zreferences.html#friedman2002" id="id6">[Fri02]</a> and <a class="bibtex reference internal" href="zreferences.html#esl2001" id="id7">[HTF01]</a>.</p>
 <hr class="docutils" />
 <p><strong>Notation and Preliminaries</strong></p>
 <p>Assume we are given a data set <span class="math notranslate nohighlight">\(\{(x_i, y_i) : i=1,\dots,N\}\)</span>, with <span class="math notranslate nohighlight">\(x_i \in \mathbb{R}^p\)</span> and <span class="math notranslate nohighlight">\(y_i \in \mathbb{R}\)</span>. These observations are assumed to be i.i.d. according to some joint distribution <span class="math notranslate nohighlight">\(\mathbb{P}_{xy}\)</span>. A goal of statistical learning is to find a function <span class="math notranslate nohighlight">\(f^* : \mathbb{R}^p \to \mathbb{R}\)</span> such that
-\begin{align*}
-f^* = \underset{f}{\text{argmin}} , \mathbb{E}_{xy}\left[L(y, f(x)) \right] ,,
-\end{align*}
+<span class="math notranslate nohighlight">\($
+    f^* = \underset{f}{\text{argmin}} \, \mathbb{E}_{xy}\left[L(y, f(x)) \right] ,
+$\)</span>
 given some loss function <span class="math notranslate nohighlight">\(L\)</span>, where the expecation is taken over the joint distribution of <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span> values.</p>
 <p>As is very common in statistical learning, boosting is a procedure to approximate <span class="math notranslate nohighlight">\(f^*\)</span> by an additive model of the form</p>
-<p>\begin{align}
-f(x) = \sum_{m=0}^M f_m(x) = \sum_{m=0}^M \beta_m b(x; \gamma_m) ,,
-\end{align}
-where the <span class="math notranslate nohighlight">\(\beta_m\)</span> denote expansion coefficients and <span class="math notranslate nohighlight">\(b(\cdot\,,\gamma) : \mathbb{R}^p \to \mathbb{R}\)</span> denote the so called <em>base-learners</em> which are parameterized by <span class="math notranslate nohighlight">\(\gamma\)</span>. If feasible in general we would like to estimate the parameters by solving</p>
-<p>\begin{align}
-\underset{{\beta_m, \gamma_m}<em>1^M}{\min} , \sum</em>{i=1}^N L\left(y_i, \sum_{m=0}^M \beta_m b(x_i; \gamma_m)\right) ,.
-\end{align}</p>
+<div class="math notranslate nohighlight">
+\[
+    f(x) = \sum_{m=0}^M f_m(x) = \sum_{m=0}^M \beta_m b(x; \gamma_m), \]</div>
+<p>where the <span class="math notranslate nohighlight">\(\beta_m\)</span> denote expansion coefficients and <span class="math notranslate nohighlight">\(b(\cdot\,,\gamma) : \mathbb{R}^p \to \mathbb{R}\)</span> denote the so called <em>base-learners</em> which are parameterized by <span class="math notranslate nohighlight">\(\gamma\)</span>. If feasible in general we would like to estimate the parameters by solving</p>
+<div class="math notranslate nohighlight">
+\[
+    \underset{\{\beta_m, \gamma_m\}_1^M}{\min}  \sum_{i=1}^N L\left(y_i, \sum_{m=0}^M \beta_m b(x_i; \gamma_m)\right) .
+\]</div>
 <p>For a general loss function and base-learner, however, this optimization is computationally intractable.</p>
 <hr class="docutils" />
 <p><strong>General Concept</strong></p>
 <p>A simple algorithm to approximate the coefficient estimates from above is to fit each tuple <span class="math notranslate nohighlight">\((\beta_m, \gamma_m)\)</span> in a stage-wise fashion. That is, one starts with an initial guess <span class="math notranslate nohighlight">\(f_0\)</span> and then</p>
-<p>For each <span class="math notranslate nohighlight">\(m=1,\dots, M\)</span>:</p>
+<p>for each <span class="math notranslate nohighlight">\(m=1,\dots, M\)</span> do:</p>
 <ol class="simple">
 <li><p><span class="math notranslate nohighlight">\((\beta_m, \gamma_m) = \underset{\beta, \gamma}{\text{argmin}} \, \sum_{i=1}^N L \left(y_i, f_{m-1}(x_i) + \beta b(x_i; \gamma) \right)\)</span></p></li>
 <li><p><span class="math notranslate nohighlight">\(f_m(x) = f_{m-1}(x) + \beta_m b(x, \gamma_m)\)</span>.</p></li>
@@ -498,36 +498,37 @@ where the <span class="math notranslate nohighlight">\(\beta_m\)</span> denote e
 <p>This simplifies the optimization problem from above consideribly, but again, for general loss functions and base-learners step 1 can be hard to solve.</p>
 <hr class="docutils" />
 <p><strong>Gradient Boosting</strong></p>
-<p>Gradient boosting, as proposed in <a class="bibtex reference internal" href="zreferences.html#friedman2000" id="id8">[Fri00]</a>, approximately solves the first step from above for differentiable loss functions using a three step procedure. In the <span class="math notranslate nohighlight">\(m\)</span>-th step from above we do</p>
+<p>Gradient boosting, as proposed in <a class="bibtex reference internal" href="zreferences.html#friedman2000" id="id8">[Fri00]</a>, approximately solves the first step from above for differentiable loss functions using a three step procedure. In the <span class="math notranslate nohighlight">\(m\)</span>-th loop from above we do</p>
 <ol class="simple">
 <li><p><span class="math notranslate nohighlight">\(r_{im} := - \left[\frac{\partial L(y_i, f(x_i))}{\partial f(x_i)}  \right]_{f(x) = f_{m-1}(x)}\)</span></p></li>
 <li><p><span class="math notranslate nohighlight">\(\gamma_m = \underset{\gamma, \rho}{\text{argmin}} \, \sum_{i=1}^N \left(r_{im} - \rho b(x_i; \gamma) \right)^2\)</span></p></li>
 <li><p><span class="math notranslate nohighlight">\(\beta_m = \underset{\beta}{\text{argmin}} \, \sum_{i=1}^N L \left(y_i, f_{m-1}(x_i) + \beta b(x_i; \gamma_m) \right)\)</span>.</p></li>
 </ol>
-<p>That is, we first compute the gradient, whose entries are called <em>pseudo-residuals</em>, and fit a single base-learner using the least-squares method. Lastly we have to solve a general optimization problem, but only in a single variable.</p>
-<p>With squared-error loss <span class="math notranslate nohighlight">\(L(y, x) = \frac{1}{2}(y - x)^2\)</span> the pseudo-residuals <span class="math notranslate nohighlight">\(r_{im}\)</span> are equivalent to the actual residuals <span class="math notranslate nohighlight">\(r_{im} = y_i - f_{m-1}(x_i)\)</span>. This allows for the nice interpretation of the procedure that given any step <span class="math notranslate nohighlight">\(m\)</span>, we consider the deviations of the labels <span class="math notranslate nohighlight">\(y_i\)</span> from our current estimate <span class="math notranslate nohighlight">\(f_{m-1}(x_i)\)</span> and train a model to fit these deviations. With other loss functions, say absolute-error loss <span class="math notranslate nohighlight">\(L(y, x) = |y - x|\)</span>, we get <span class="math notranslate nohighlight">\(r_{im} = \text{sign}(y_i - f_{m-1}(x_i))\)</span> and in the <span class="math notranslate nohighlight">\(m\)</span>-th step the base-learner is fit to simply predict the direction to which a sample deviates, which is more robust to outliers as it ignores the magnitude of the deviation.</p>
+<p>That is, we first compute the gradient, whose entries we call <em>pseudo-residuals</em>, and fit a single base-learner using the least-squares method. Lastly we have to solve a general optimization problem, but only in a single variable.</p>
+<p>With squared-error loss (<span class="math notranslate nohighlight">\(L(y, x) = \frac{1}{2}(y - x)^2\)</span>) the pseudo-residuals <span class="math notranslate nohighlight">\(r_{im}\)</span> are equivalent to the actual residuals <span class="math notranslate nohighlight">\(r_{im} = y_i - f_{m-1}(x_i)\)</span>. This allows for the nice interpretation of the procedure that given any step <span class="math notranslate nohighlight">\(m\)</span>, we consider the deviations of the labels <span class="math notranslate nohighlight">\(y_i\)</span> from our current estimate <span class="math notranslate nohighlight">\(f_{m-1}(x_i)\)</span> and train a model to fit these deviations. With other loss functions, say absolute-error loss (<span class="math notranslate nohighlight">\(L(y, x) = |y - x|\)</span>) we get <span class="math notranslate nohighlight">\(r_{im} = \text{sign}(y_i - f_{m-1}(x_i))\)</span> and in the <span class="math notranslate nohighlight">\(m\)</span>-th step the base-learner is fit to simply predict the direction to which a sample deviates, which is more robust to outliers as it ignores the magnitude of the deviation.</p>
 <hr class="docutils" />
 <p><strong>Gradient Tree Boosting</strong></p>
 <p>A popular choice of base-learners are decision trees. When using trees as base learners some steps in the generic algorithm simplify and some can even be improved. First, let us formally define a tree. A regression tree with <span class="math notranslate nohighlight">\(J\)</span> terminal-nodes is a function
-\begin{align}
-T\left(x; {\alpha_j, R_j}<em>{j=1}^J \right) = \sum</em>{j=1}^J \alpha_j \mathbb{1}_{R_j} (x) ,,
-\end{align}
+<span class="math notranslate nohighlight">\($
+    T\left(x; \{\alpha_j, R_j\}_{j=1}^J \right) = \sum_{j=1}^J \alpha_j \mathbb{1}_{R_j} (x) \,,
+$\)</span>
 where <span class="math notranslate nohighlight">\(\{R_j\}_{j=1}^J\)</span> is a partition of the feature space <span class="math notranslate nohighlight">\(\mathbb{R}^p\)</span>. Strictly speaking, <span class="math notranslate nohighlight">\(J\)</span> is also a parameter, however, it is usually considered a <em>hyper-parameter</em> which has to be chosen using prior information or via methods like cross-validation.</p>
 <p>Let us now consider the second step of the above algorithm. First note that optimizing over <span class="math notranslate nohighlight">\(\rho\)</span> is irrelevant in the case of trees as we can always define <span class="math notranslate nohighlight">\(\tilde{\alpha}_j := \rho \alpha_j\)</span>. But then solving 2 is equivalent to solving</p>
-<p>\begin{align}
-{\alpha_{jm}, R_{jm}}<em>{j=1}^J =: \gamma_m = \underset{\gamma}{\text{argmin}} , \sum</em>{i=1}^N \left(r_{im} - T(x_i; \gamma) \right)^2 ,,
-\end{align}
-For a given <span class="math notranslate nohighlight">\(J\)</span> this combinatorial optimization problem is again computationally intractable, but there are many algorithms to solve it approximately; see for example the CART algorithm in <a class="bibtex reference internal" href="zreferences.html#esl2001" id="id9">[HTF01]</a>.</p>
-<p>Henceforth say we have (approximately) solved the tree optimization problem (step 2) and are left to optimize for the constant <span class="math notranslate nohighlight">\(\beta_m\)</span> (step 3). As will be seen, with trees we can even go one step further and choose an optimal value for each terminal-node region. We  assume we are given parameters <span class="math notranslate nohighlight">\(\gamma_m = \{\alpha_j, R_j\}_{j=1}^J\)</span>. The next simplification when using trees stems from the fact the the <span class="math notranslate nohighlight">\(R_j\)</span>’s form a partition of the feature space. Instead of step 3 we can thus write</p>
-<p>\begin{align}
-{\beta_{jm}}<em>{j=1}^J = \underset{\beta_1,\dots,\beta_J}{\text{argmin}} , \sum</em>{j=1}^J \sum_{x_i \in R_j} L \left(y_i, f_{m-1}(x_i) + \beta_j \right) ,,
-\end{align}
-which can be solved for each region seperately. Note that we can write <span class="math notranslate nohighlight">\(L \left(y_i, f_{m-1}(x_i) + \beta_j \right)\)</span> instead of <span class="math notranslate nohighlight">\(L \left(y_i, f_{m-1}(x_i) + \beta_j \alpha_j \right)\)</span> for the same reasons as stated above. For example with squared error loss we would then get <span class="math notranslate nohighlight">\(\beta_{jm} = \text{mean}(y_i - f_{m-1}(x_i) : x_i \in R_{jm}) = \text{mean}(r_{im} : x_i \in R_{jm})\)</span>.</p>
+<div class="math notranslate nohighlight">
+\[
+\{\alpha_{jm}, R_{jm}\}_{j=1}^J =: \gamma_m = \underset{\gamma}{\text{argmin}} \, \sum_{i=1}^N \left(r_{im} - T(x_i; \gamma) \right)^2 \,,
+\]</div>
+<p>For a given <span class="math notranslate nohighlight">\(J\)</span> this combinatorial optimization problem is again computationally intractable, but there are many algorithms which approximate the solution; see for example the CART algorithm in <a class="bibtex reference internal" href="zreferences.html#esl2001" id="id9">[HTF01]</a>.</p>
+<p>Henceforth say we have (approximately) solved the tree optimization problem (step 2) and are left to optimize for the constant <span class="math notranslate nohighlight">\(\beta_m\)</span> (step 3). As will be seen, with trees we can even go one step further and choose an optimal value for each terminal-node region. Let <span class="math notranslate nohighlight">\(\gamma_m = \{\alpha_j, R_j\}_{j=1}^J\)</span> be the fitted parameters from step 2. The next simplification when using trees stems from the fact the the <span class="math notranslate nohighlight">\(R_j\)</span>’s form a partition of the feature space. We can rewrite the sum over the individuals as a sum over the terminal-node regions, as a tree predicts the same value for each region. That is, step 3 becomes</p>
+<div class="math notranslate nohighlight">
+\[
+\{\beta_{jm}\}_{j=1}^J = \underset{\beta_1,\dots,\beta_J}{\text{argmin}} \, \sum_{j=1}^J \sum_{x_i \in R_j} L \left(y_i, f_{m-1}(x_i) + \beta_j \right) \,,
+\]</div>
+<p>which can be solved for each region seperately. Note that we can write <span class="math notranslate nohighlight">\(L \left(y_i, f_{m-1}(x_i) + \beta_j \right)\)</span> instead of <span class="math notranslate nohighlight">\(L \left(y_i, f_{m-1}(x_i) + \beta_j \alpha_j \right)\)</span> for the same reasons as stated above. As an example, with squared error loss we would then get <span class="math notranslate nohighlight">\(\beta_{jm} = \text{mean}(y_i - f_{m-1}(x_i) : x_i \in R_{jm}) = \text{mean}(r_{im} : x_i \in R_{jm})\)</span>.</p>
 <hr class="docutils" />
 <p><strong>Algorithm</strong></p>
 <p>For the sake of clarity I illustrate the complete gradient tree boosting algorithm. This corresponds to Algorithm 10.3 (Gradient Tree Boosting Algorithm) in <a class="bibtex reference internal" href="zreferences.html#esl2001" id="id10">[HTF01]</a>.</p>
-<hr class="docutils" />
-<p><em>Input</em>: <span class="math notranslate nohighlight">\(M\)</span> (number of trees), <span class="math notranslate nohighlight">\(J\)</span> (number of terminal nodes), <span class="math notranslate nohighlight">\(L\)</span> loss function, <span class="math notranslate nohighlight">\(\{(x_i, y_i)\}_{i=1}^N\)</span> training data.</p>
+<p><em>Input</em>: <span class="math notranslate nohighlight">\(M\)</span> (number of trees), <span class="math notranslate nohighlight">\(J\)</span> (number of terminal nodes), <span class="math notranslate nohighlight">\(L\)</span> (loss function), <span class="math notranslate nohighlight">\(\{(x_i, y_i)\}_{i=1}^N\)</span> (training data).</p>
 <ol class="simple">
 <li><p><span class="math notranslate nohighlight">\(f_0 = \underset{\gamma}{\text{argmin}} \sum_{i=1}^N L(y_i, \gamma)\)</span></p></li>
 <li><p>For <span class="math notranslate nohighlight">\(m = 1, \dots, M\)</span>:</p>
@@ -542,23 +543,29 @@ which can be solved for each region seperately. Note that we can write <span cla
 </ol>
 <hr class="docutils" />
 <p><strong>Enhancements</strong></p>
-<p>Until now we have not mentioned two very important concepts used widely in the statistical and machine learning literature. Injecting randomness, which is used to decorrelate trees and avoid overfitting, and regularization, which is used to avoid overfitting and thus improve out-of-sample loss.</p>
+<p>Until now we have not mentioned two key concepts used widely in the statistical and machine learning literature. <em>Injecting randomness</em>, which is used to decorrelate trees and therefore to avoid overfitting, and <em>regularization</em>, which is is also used to avoid overfitting.</p>
 <ul class="simple">
 <li><p><em><strong>Injecting Randomness.</strong></em>
-From empirical experience it has been seen that methods like bagging <a class="bibtex reference internal" href="zreferences.html#breiman96" id="id11">[Bre96]</a> and random forests <a class="bibtex reference internal" href="zreferences.html#breiman2001" id="id12">[Bre01]</a> outperform similar algorithms that do not explicitly make use of randomness. Similarly stochastic gradient descent is considered superior to the classical gradient descent algorithm when used in a machine learning setting; see <a class="bibtex reference internal" href="zreferences.html#bottou2016" id="id13">[BCN16]</a>. The easiest way to inject randomness to the gradient boosting algorithm is described in <a class="bibtex reference internal" href="zreferences.html#friedman2002" id="id14">[Fri02]</a>. In the second step of the above algorithm we consider a random subset of the data of size <span class="math notranslate nohighlight">\(N' &lt; N\)</span>. On top of potentially improving out-of-sample fit, this can lead to significantly shorter training times.</p></li>
+From empirical experience it has been seen that methods like bagging <a class="bibtex reference internal" href="zreferences.html#breiman96" id="id11">[Bre96]</a> and random forests <a class="bibtex reference internal" href="zreferences.html#breiman2001" id="id12">[Bre01]</a> outperform similar algorithms that do not explicitly make use of randomness. Similarly stochastic gradient descent is considered superior to the classical gradient descent algorithm when used in a machine learning setting; see <a class="bibtex reference internal" href="zreferences.html#bottou2016" id="id13">[BCN16]</a>. The easiest way to inject randomness to the gradient boosting algorithm is described in <a class="bibtex reference internal" href="zreferences.html#friedman2002" id="id14">[Fri02]</a>. In the second step of the above algorithm we simply consider a randommly shuffled subset of the data of size <span class="math notranslate nohighlight">\(N' &lt; N\)</span>. On top of potentially improving out-of-sample fit, this can lead to significantly shorter training times.</p></li>
 <li><p><em><strong>Regularization.</strong></em>
-Similarly as injecting randomness, a popular technique to avoid overfitting is regularization. Especially shrinkage methods like ridge regression and the lasso have gained immense popularity; see for example <a class="bibtex reference internal" href="zreferences.html#slws2015" id="id15">[HTW15]</a>. A immediate enhancement to the above algorithm is to include a shrinkage paramater <span class="math notranslate nohighlight">\(0 &lt; \nu \leq 1\)</span>, which is usually called the <em>learning rate</em>. Then, in step 2.d) we modify the equation slightly to get
+Similarly as injecting randomness, a popular technique to avoid overfitting is regularization. Especially shrinkage methods like ridge regression and lasso have gained immense popularity; see for example <a class="bibtex reference internal" href="zreferences.html#slws2015" id="id15">[HTW15]</a>. An immediate enhancement to the above algorithm is to include a shrinkage paramater <span class="math notranslate nohighlight">\(0 &lt; \nu \leq 1\)</span> in the updating step, which is usually called the <em>learning rate</em>. In step 2.d) we then modify the equation slightly to get
 <span class="math notranslate nohighlight">\($f_m = f_{m-1} + \nu \sum_{j=1}^J \gamma_{jm} \mathbb{1}_{R_{jm}} \,.\)</span>$
 It was found empirically that small values of the learning rate, <span class="math notranslate nohighlight">\(\nu &lt; 0.1\)</span>, lead to better generalization; see <a class="bibtex reference internal" href="zreferences.html#friedman2000" id="id16">[Fri00]</a>.</p></li>
 </ul>
 <hr class="docutils" />
 <p><strong>Catboost</strong></p>
-<p>Differences:</p>
+<p>Catboost is an open-source library for gradient boosting on decision trees. Its implementation differs slighty from the above algorithm. As of right now it outperforms or ties with most other open-source boosting libraries such as <a class="reference external" href="https://lightgbm.readthedocs.io/en/latest/">LightGBM</a>, <a class="reference external" href="https://xgboost.readthedocs.io/en/latest/">XGBoost</a> and <a class="reference external" href="https://docs.h2o.ai/h2o/latest-stable/h2o-docs/data-science/gbm.html">H2O</a>; see the benchmarks <a class="reference external" href="https://catboost.ai/#benchmark">here</a>. Next I will list the main differences and refer to the respective papers for reference.</p>
 <ul class="simple">
-<li><p>Unbiased Gradients</p></li>
-<li><p>Oblivious Trees</p></li>
-<li><p>Categorical Features</p></li>
+<li><p><em><strong>Categorical Features.</strong></em>
+The main new feature in <code class="docutils literal notranslate"><span class="pre">catboost</span></code> is the clever support of categorical features. Decision trees cannot usally deal with categorical features with more than 2 states. (This is of course because the binary relation “<span class="math notranslate nohighlight">\(\leq\)</span>” must not be defined on the discrete space.) A common approach is the so called <em>one-hot</em> encoding, where we introduce a new feature binary feature for the activation of each state. If the feature set includes many categorical features and the state space is large for many, then one-hot encoding can blow up the dimensionality of the problem to a problematic extent. Another approach is to use target statistics, in which we try to map the categorical features to numerical ones. Say the <span class="math notranslate nohighlight">\(k\)</span>-th feature is categorical. Frequently the target statistic is chosen as to approximate the conditional mean, i.e. <span class="math notranslate nohighlight">\(\tilde{x}_{ik} \approx \mathbb{E}_{xy}\left[y \mid x = x_{ik}\right]\)</span>. See <a class="bibtex reference internal" href="zreferences.html#dorogush2018" id="id17">[DEG18]</a> for details.</p></li>
+<li><p><em><strong>Unbiased Gradients.</strong></em>
+It is argued in <a class="bibtex reference internal" href="zreferences.html#dorogush2017" id="id18">[DGG+17]</a> that gradient boosting suffers from a bias generated by using biased gradient estimates, which leads to overfitting. Theorem 1 in <a class="bibtex reference internal" href="zreferences.html#prokhorenkova2017" id="id19">[PGV+17]</a> proves this result under some conditions on the algorithm. A solution to avoid this effect is proposed in the above papers and implemented in <code class="docutils literal notranslate"><span class="pre">catboost</span></code>.</p></li>
+<li><p><em><strong>Oblivious Trees.</strong></em>
+The base-learner used in <code class="docutils literal notranslate"><span class="pre">catboost</span></code> is not a regular decision tree but an <em>oblivious tree</em>, sometimes also called a <em>decision table</em>. The main difference to regular decision trees is that all nodes on a given level have to split on the same feature and the same point. This is why oblivious trees are usually longer than standard trees since they need more levels to capture non-linearities. Recently this form of tree structure has captured attention in the machine learning community and is being used often together with gradient boosting machines; see for example <a class="bibtex reference internal" href="zreferences.html#yin2017" id="id20">[LO17]</a>, <a class="bibtex reference internal" href="zreferences.html#ferov2016" id="id21">[FModry16]</a> and <a class="bibtex reference internal" href="zreferences.html#popov2019" id="id22">[PMB19]</a>. For a general definition of oblivious trees see <a class="bibtex reference internal" href="zreferences.html#kohavi1995" id="id23">[KL95]</a>.</p></li>
 </ul>
+<hr class="docutils" />
+<p><em><strong>Final Remark on the Theory.</strong></em></p>
+<p>In the above I have talked about the (historical) development of the gradient tree boosting algorithm, however, I have not explained why boosting achieves the goal of function approximation so well. Given the standard squared-error loss it is known that the function <span class="math notranslate nohighlight">\(f^*\)</span> which minimizes the expected loss is the conditional expectation <span class="math notranslate nohighlight">\(f^*(x) = \mathbb{E}_{xy}\left[y \mid x=x\right]\)</span>. Do we have any guarantee that boosting is at least point wise consistent then? Specific variants of the boosting algorithm and consistency thereof have been of interest in the recent literature; see <span class="bibtex" id="id24">[biau2017]</span> or <a class="bibtex reference internal" href="zreferences.html#lu2019" id="id25">[LKPM19]</a>. For the very first boosting algorithm (which was actually used for classification) <a class="bibtex reference internal" href="zreferences.html#platt2007" id="id26">[ScholkopfPlattHofmann07]</a> show consistency under regularity conditions. At last <a class="bibtex reference internal" href="zreferences.html#yu2005" id="id27">[ZY05]</a> consider consistency of the boosting algorithm under early-stopping.</p>
 </div>
 <div class="section" id="implementation-application">
 <h3>Implementation / Application<a class="headerlink" href="#implementation-application" title="Permalink to this headline">¶</a></h3>
