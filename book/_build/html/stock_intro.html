@@ -101,6 +101,11 @@
    </li>
   </ul>
  </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="zreferences.html">
+   Bibliography
+  </a>
+ </li>
 </ul>
 
 </nav>
@@ -193,7 +198,7 @@
                 
   <div class="section" id="data-description">
 <h1>Data Description<a class="headerlink" href="#data-description" title="Permalink to this headline">¶</a></h1>
-<p>In the following I will present my model for the stock data set. Before I could fit my final model I had to transform the data. Next I will discuss how I changed the data structure and how I split the data intro training and validation parts.</p>
+<p>In the following I will present my model for the stock data set. Before I could fit my final model I had to transform the data. Next I will discuss how I changed the data structure and how I chose split the data intro training and validation parts.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
@@ -313,14 +318,14 @@
 </table>
 </div></div></div>
 </div>
-<p>The original data set contains 1_629_155 observations of stock returns including 63 features. One of these features is the date. In comparison to classical panel data, however, the above data does not have a unit index. That is, we cannot know which units move between time periods. Observations are measured from the 01.31.1965 until the 31.05.2014. Again, as in the simulated case, testing observations are given a <code class="docutils literal notranslate"><span class="pre">NaN</span></code> in the outcome column. Here the testing observations are all observations starting from the 31.01.2004 until the last observed time period.</p>
+<p>The original data set contains 1_629_155 observations of stock returns including 63 features. One of these features which is of particular importance is the date. In comparison to classical panel data, however, the above data does not have a unit index. That is, we cannot know which units move between time periods. Observations are measured from the 01.31.1965 until the 31.05.2014. Again, as in the simulated case, testing observations are marked with a <code class="docutils literal notranslate"><span class="pre">NaN</span></code> in the outcome column. Here the testing observations are all observations starting from the 31.01.2004 until the last observed time period.</p>
 <div class="section" id="cleaning-the-data">
 <h2>Cleaning the Data<a class="headerlink" href="#cleaning-the-data" title="Permalink to this headline">¶</a></h2>
-<p>Before training my models on the data I cleaned it in several ways. First of all I transformed the date column to a year column. I then dropped all observations older than 1990. And at last I dropped all observations which had absolute stock returns greater than 6. The data cleaning script can be found here <a class="reference external" href="https://github.com/timmens/topics-project/blob/main/codes/clean_data.py">clean_data.py</a>.</p>
+<p>Before training my models I cleaned the data in several ways. First, I transformed the date column to a year column and a one-hot-encoded quarter column. I.e., <code class="docutils literal notranslate"><span class="pre">data</span> <span class="pre">=</span> <span class="pre">1965-01-31</span></code> becomes <code class="docutils literal notranslate"><span class="pre">year</span> <span class="pre">=</span> <span class="pre">1965</span></code> and all dummies will be zero, as the first quarter is integrated in the intercept. I then dropped all observations older than 1990. I did this since I believed that the any information in the data of the ’70s-’90s which could be used to explain stock returns was unlikely to still explain modern stock returns. Also I wanted to reduce the size of the data set. At last I dropped all observations which had absolute returns greater than 6, as from looking at a fine histogram, these seemed to be outliers. The data cleaning script can be found here <a class="reference external" href="https://github.com/timmens/topics-project/blob/main/codes/clean_data.py">clean_data.py</a>.</p>
 </div>
 <div class="section" id="train-validation-split">
 <h2>Train / Validation Split<a class="headerlink" href="#train-validation-split" title="Permalink to this headline">¶</a></h2>
-<p>As I did not want to ignore the time dimension for the train / validation split I constructed the respective sets as follows. I grouped the cleaned data set into smaller sets by year. For each year I split the smaller set into 80% training and 20% validation set. Lastly I concatened the smaller sets together to form the final training and validation sets. Using this strategy I can train my model on all time-periods and evaluate the performance on all time-periods. The specific implementation is given in the script <a class="reference external" href="https://github.com/timmens/topics-project/blob/main/codes/train_test_split.py">train_test_split.py</a>.</p>
+<p>As I did not want to ignore the time dimension for the train / validation split I constructed the respective sets as follows. I grouped the cleaned data set into sets by year. For each year I split the respective set into 80% training and 20% validation set. Lastly I concatened the smaller sets together to form the final training and validation sets. Using this strategy I can train my model on all time-periods and evaluate the performance on all time-periods. The specific implementation is given in the script <a class="reference external" href="https://github.com/timmens/topics-project/blob/main/codes/train_test_split.py">train_test_split.py</a>.</p>
 </div>
 </div>
 

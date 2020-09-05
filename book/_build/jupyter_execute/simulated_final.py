@@ -1,6 +1,6 @@
 # Final
 
-In this last section I will list my top four models and their respective performances on a validation set. Please note that only for my final model I will explain how the fitting procedure works in detail.
+In this last section I will list my top four models and their respective performances on the validation set. Please note that only for my final model I will explain how the fitting procedure works in detail.
 
 I consider a
 
@@ -9,7 +9,7 @@ I consider a
 3. Two-stage random forest with feature selection
 4. Gradient tree boosting (*the final model*)
 
-If you only care about the final model please jump directly to subsection 4, in which I explain how the model is fit on a theoretical basis as well as how to implement it in Python. Note also that in the very last subsection I include a table comparing the validation mean squared error for all of the presented models.
+If you only care about the final model please jump directly to subsection 4, in which I explain how the model is fit on a theoretical basis as well as how to implement it in Python. Note also that in the very last subsection I include a figure comparing the validation mean squared error for all of the presented models.
 
 ## Preliminaries
 
@@ -72,7 +72,7 @@ I fit a deep neural network using the popular [keras](https://keras.io/) library
 
 ***Note.*** I decide to use this specific architecture as I "learned" from the previous section that the main effects are sparse in the sense that most likely only very few features are relevant. However, I also realized from playing around with the linear model while watching the validation error that some effects must be non-linear. An architecture which reduces the nodes from the original 100 input dimensions to 50, then 25 and then 10, forces the network to select relevant features. And by using the additional 5 layers the network can potentially find non-linear signals.
 
-***Remark.*** Since the gradient boosted tree presented below performs so well I did not consider many different architectures. I do believe that the neural networks should be able to perform comparably well if a different architecture is chosen.
+***Remark.*** Since the gradient boosted tree presented below performs so well I did not consider many different architectures. I do believe that the neural networks should be able to perform comparably well if a better architecture is chosen.
 
 N_COL = X_train.shape[1]
 def build_regressor():
@@ -169,7 +169,7 @@ print(f"(Random Forest) MSE: {mse_rf}")
 
 The final model I decided to use is a specific variant of a gradient boosted tree. The key concepts of this method are equivalent to the algorithm proposed in the seminal paper by Friedman, see {cite}`friedman2002`. The version I am using is implemented in the [catboost](https://catboost.ai/) package, which differs slightly from common other implementations. Next I will introduce the theoretical concept of gradient boosting with a particular focus on tree weak-learners. Afterwards I show how to fit a model using ``catboost``.
 
-***Note.*** My final prediction submissions are made with the exact model specification as presented in below, but using all the data. The corresponding script can be found here [final_prediction.py](https://github.com/timmens/topics-project/blob/main/codes/final_prediction.py).
+***Note.*** My final prediction submissions are made with the exact model specification as presented in below, but using the complete training data. The corresponding script can be found here [final_prediction.py](https://github.com/timmens/topics-project/blob/main/codes/final_prediction.py).
 
 
 ### Theory
@@ -182,22 +182,15 @@ I will first explain the general idea behind boosting and gradient boosting. The
 
 **Notation and Preliminaries**
 
-Assume we are given a data set $\{(x_i, y_i) : i=1,\dots,N\}$, with $x_i \in \mathbb{R}^p$ and $y_i \in \mathbb{R}$. These observations are assumed to be i.i.d. according to some joint distribution $\mathbb{P}_{xy}$. A goal of statistical learning is to find a function $f^* : \mathbb{R}^p \to \mathbb{R}$ such that
-$$
-    f^* = \underset{f}{\text{argmin}} \, \mathbb{E}_{xy}\left[L(y, f(x)) \right] ,
-$$
+Assume we are given a data set $\{(x_i, y_i) : i=1,\dots,N\}$, with $x_i \in \mathbb{R}^p$ and $y_i \in \mathbb{R}$. These observations are assumed to be i.i.d. according to some joint distribution $\mathbb{P}_{xy}$. An important goal of statistical learning is to find a function $f^* : \mathbb{R}^p \to \mathbb{R}$ such that
+$$f^* = \underset{f}{\text{argmin}} \, \mathbb{E}_{xy}\left[L(y, f(x)) \right] ,$$
 given some loss function $L$, where the expecation is taken over the joint distribution of $x$ and $y$ values.
 
 As is very common in statistical learning, boosting is a procedure to approximate $f^*$ by an additive model of the form
-
-$$
-    f(x) = \sum_{m=0}^M f_m(x) = \sum_{m=0}^M \beta_m b(x; \gamma_m), $$
+$$f(x) = \sum_{m=0}^M \beta_m b(x; \gamma_m), $$
 where the $\beta_m$ denote expansion coefficients and $b(\cdot\,,\gamma) : \mathbb{R}^p \to \mathbb{R}$ denote the so called *base-learners* which are parameterized by $\gamma$. If feasible in general we would like to estimate the parameters by solving
-
-$$
-    \underset{\{\beta_m, \gamma_m\}_1^M}{\min}  \sum_{i=1}^N L\left(y_i, \sum_{m=0}^M \beta_m b(x_i; \gamma_m)\right) .
-$$
-For a general loss function and base-learner, however, this optimization is computationally intractable.
+$$\underset{\{\beta_m, \gamma_m\}_1^M}{\min}  \sum_{i=1}^N L\left(y_i, \sum_{m=0}^M \beta_m b(x_i; \gamma_m)\right).$$
+For a general loss function and base-learner, however, this optimization is computationally intractable. We will also see that there are other reasons why we would like to estimate the coefficients in a different fashion.
 
 ---
 
@@ -221,39 +214,33 @@ Gradient boosting, as proposed in {cite}`friedman2000`, approximately solves the
 2. $\gamma_m = \underset{\gamma, \rho}{\text{argmin}} \, \sum_{i=1}^N \left(r_{im} - \rho b(x_i; \gamma) \right)^2$
 3. $\beta_m = \underset{\beta}{\text{argmin}} \, \sum_{i=1}^N L \left(y_i, f_{m-1}(x_i) + \beta b(x_i; \gamma_m) \right)$.
 
-That is, we first compute the gradient, whose entries we call *pseudo-residuals*, and fit a single base-learner using the least-squares method. Lastly we have to solve a general optimization problem, but only in a single variable. 
+That is, we first compute the gradient, whose entries we call *pseudo-residuals*, and then we fit a single base-learner using the least-squares method. Lastly we have to solve a general optimization problem, but only in a single variable, which can be done efficiently with state-of-the-art optimization algorithms.
 
-With squared-error loss ($L(y, x) = \frac{1}{2}(y - x)^2$) the pseudo-residuals $r_{im}$ are equivalent to the actual residuals $r_{im} = y_i - f_{m-1}(x_i)$. This allows for the nice interpretation of the procedure that given any step $m$, we consider the deviations of the labels $y_i$ from our current estimate $f_{m-1}(x_i)$ and train a model to fit these deviations. With other loss functions, say absolute-error loss ($L(y, x) = |y - x|$) we get $r_{im} = \text{sign}(y_i - f_{m-1}(x_i))$ and in the $m$-th step the base-learner is fit to simply predict the direction to which a sample deviates, which is more robust to outliers as it ignores the magnitude of the deviation.
+With squared-error loss ($L(y, x) = \frac{1}{2}(y - x)^2$) the pseudo-residuals $r_{im}$ are equivalent to the actual residuals $r_{im} = y_i - f_{m-1}(x_i)$. This allows for the nice interpretation of the procedure that given any step $m$, we consider the deviations of the labels $y_i$ from our current estimate $f_{m-1}(x_i)$ and train a model to fit these deviations. I.e. in each iterations the model tries to improve the fit in the regions where the fit is worst. With other loss functions, say absolute-error loss ($L(y, x) = |y - x|$) we get $r_{im} = \text{sign}(y_i - f_{m-1}(x_i))$ and in the $m$-th step the base-learner is fit to simply predict the direction to which a sample deviates, which is more robust to outliers as it ignores the magnitude of the deviation.
 
 ---
 
 **Gradient Tree Boosting**
 
 A popular choice of base-learners are decision trees. When using trees as base learners some steps in the generic algorithm simplify and some can even be improved. First, let us formally define a tree. A regression tree with $J$ terminal-nodes is a function
-$$
-    T\left(x; \{\alpha_j, R_j\}_{j=1}^J \right) = \sum_{j=1}^J \alpha_j \mathbb{1}_{R_j} (x) \,,
-$$
+$$T\left(x; \{\alpha_j, R_j\}_{j=1}^J \right) = \sum_{j=1}^J \alpha_j \mathbb{1}_{R_j} (x) ,$$
 where $\{R_j\}_{j=1}^J$ is a partition of the feature space $\mathbb{R}^p$. Strictly speaking, $J$ is also a parameter, however, it is usually considered a *hyper-parameter* which has to be chosen using prior information or via methods like cross-validation. 
 
 Let us now consider the second step of the above algorithm. First note that optimizing over $\rho$ is irrelevant in the case of trees as we can always define $\tilde{\alpha}_j := \rho \alpha_j$. But then solving 2 is equivalent to solving
-
-$$
-\{\alpha_{jm}, R_{jm}\}_{j=1}^J =: \gamma_m = \underset{\gamma}{\text{argmin}} \, \sum_{i=1}^N \left(r_{im} - T(x_i; \gamma) \right)^2 \,,
-$$
-For a given $J$ this combinatorial optimization problem is again computationally intractable, but there are many algorithms which approximate the solution; see for example the CART algorithm in {cite}`esl2001`.
+$$\{\alpha_{jm}, R_{jm}\}_{j=1}^J =: \gamma_m = \underset{\gamma}{\text{argmin}} \, \sum_{i=1}^N \left(r_{im} - T(x_i; \gamma) \right)^2 $$
+For a given $J$ this combinatorial optimization problem is again computationally intractable, but there are many algorithms that can approximate the solution; see for example the CART algorithm in {cite}`esl2001`.
 
 Henceforth say we have (approximately) solved the tree optimization problem (step 2) and are left to optimize for the constant $\beta_m$ (step 3). As will be seen, with trees we can even go one step further and choose an optimal value for each terminal-node region. Let $\gamma_m = \{\alpha_j, R_j\}_{j=1}^J$ be the fitted parameters from step 2. The next simplification when using trees stems from the fact the the $R_j$'s form a partition of the feature space. We can rewrite the sum over the individuals as a sum over the terminal-node regions, as a tree predicts the same value for each region. That is, step 3 becomes
+$$\{\beta_{jm}\}_{j=1}^J = \underset{\beta_1,\dots,\beta_J}{\text{argmin}} \, \sum_{j=1}^J \sum_{x_i \in R_j} L \left(y_i, f_{m-1}(x_i) + \beta_j \right) \,,$$
+which can be solved for each region seperately. Note that we can write $L \left(y_i, f_{m-1}(x_i) + \beta_j \right)$ instead of $L \left(y_i, f_{m-1}(x_i) + \beta_j \alpha_j \right)$.
 
-$$
-\{\beta_{jm}\}_{j=1}^J = \underset{\beta_1,\dots,\beta_J}{\text{argmin}} \, \sum_{j=1}^J \sum_{x_i \in R_j} L \left(y_i, f_{m-1}(x_i) + \beta_j \right) \,,
-$$
-which can be solved for each region seperately. Note that we can write $L \left(y_i, f_{m-1}(x_i) + \beta_j \right)$ instead of $L \left(y_i, f_{m-1}(x_i) + \beta_j \alpha_j \right)$ for the same reasons as stated above. As an example, with squared error loss we would then get $\beta_{jm} = \text{mean}(y_i - f_{m-1}(x_i) : x_i \in R_{jm}) = \text{mean}(r_{im} : x_i \in R_{jm})$.
+As an example, with squared error loss we would then get $\beta_{jm} = \text{mean}(y_i - f_{m-1}(x_i) : x_i \in R_{jm}) = \text{mean}(r_{im} : x_i \in R_{jm})$.
 
 ---
 
 **Algorithm**
 
-For the sake of clarity I illustrate the complete gradient tree boosting algorithm. This corresponds to Algorithm 10.3 (Gradient Tree Boosting Algorithm) in {cite}`esl2001`.
+For the sake of clarity I illustrate the complete gradient tree boosting algorithm. This corresponds to Algorithm 10.3 (Gradient Tree Boosting Algorithm) in {cite}`esl2001` with minor modifications.
 
 *Input*: $M$ (number of trees), $J$ (number of terminal nodes), $L$ (loss function), $\{(x_i, y_i)\}_{i=1}^N$ (training data).
 
@@ -276,7 +263,7 @@ From empirical experience it has been seen that methods like bagging {cite}`brei
 
 - ***Regularization.***
 Similarly as injecting randomness, a popular technique to avoid overfitting is regularization. Especially shrinkage methods like ridge regression and lasso have gained immense popularity; see for example {cite}`slws2015`. An immediate enhancement to the above algorithm is to include a shrinkage paramater $0 < \nu \leq 1$ in the updating step, which is usually called the *learning rate*. In step 2.d) we then modify the equation slightly to get
-$$f_m = f_{m-1} + \nu \sum_{j=1}^J \gamma_{jm} \mathbb{1}_{R_{jm}} \,.$$
+$f_m = f_{m-1} + \nu \sum_{j=1}^J \gamma_{jm} \mathbb{1}_{R_{jm}}$.
 It was found empirically that small values of the learning rate, $\nu < 0.1$, lead to better generalization; see {cite}`friedman2000`.
 
 ---
@@ -286,7 +273,7 @@ It was found empirically that small values of the learning rate, $\nu < 0.1$, le
 Catboost is an open-source library for gradient boosting on decision trees. Its implementation differs slighty from the above algorithm. As of right now it outperforms or ties with most other open-source boosting libraries such as [LightGBM](https://lightgbm.readthedocs.io/en/latest/), [XGBoost](https://xgboost.readthedocs.io/en/latest/) and [H2O](https://docs.h2o.ai/h2o/latest-stable/h2o-docs/data-science/gbm.html); see the benchmarks [here](https://catboost.ai/#benchmark). Next I will list the main differences and refer to the respective papers for reference.
 
 - ***Categorical Features.***
-The main new feature in ``catboost`` is the clever support of categorical features. Decision trees cannot usally deal with categorical features with more than 2 states. (This is of course because the binary relation "$\leq$" must not be defined on the discrete space.) A common approach is the so called *one-hot* encoding, where we introduce a new feature binary feature for the activation of each state. If the feature set includes many categorical features and the state space is large for many, then one-hot encoding can blow up the dimensionality of the problem to a problematic extent. Another approach is to use target statistics, in which we try to map the categorical features to numerical ones. Say the $k$-th feature is categorical. Frequently the target statistic is chosen as to approximate the conditional mean, i.e. $\tilde{x}_{ik} \approx \mathbb{E}_{xy}\left[y \mid x = x_{ik}\right]$. See {cite}`dorogush2018` for details.
+The main new feature in ``catboost`` is the clever support of categorical features. Decision trees cannot usally deal with categorical features with more than 2 states. (This is of course because the binary relation "$\leq$" must not be defined on the discrete space.) A common approach is the so called *one-hot* encoding, where we introduce a new binary feature for the activation of each state. If the feature set includes many categorical features and the state space is large for many, then one-hot encoding can blow up the dimensionality of the problem to a problematic extent. Another approach is to use target statistics, in which we try to map the categorical features to numerical ones. Consider a categorical feature and let it be denoted by the $k$-th feature. Frequently the target statistic is chosen as to approximate the conditional mean, i.e. $\tilde{x}_{ik} \approx \mathbb{E}_{xy}\left[y \mid x = x_{ik}\right]$. See {cite}`dorogush2018` for details.
 
 - ***Unbiased Gradients.***
 It is argued in {cite}`dorogush2017` that gradient boosting suffers from a bias generated by using biased gradient estimates, which leads to overfitting. Theorem 1 in {cite}`prokhorenkova2017` proves this result under some conditions on the algorithm. A solution to avoid this effect is proposed in the above papers and implemented in ``catboost``.
@@ -317,8 +304,8 @@ print(f"(Catboost) MSE: {mse_gbt}")
 
 ## MSE Comparison
 
-models = ["nnet", "lm", "rf", "catboost"]
-mses = [mse_nnet, mse_lm, mse_rf, mse_gbt]
+models = ["lm", "nnet", "rf", "catboost"]
+mses = [mse_lm, mse_nnet, mse_rf, mse_gbt]
 data = pd.DataFrame(zip(models, mses), columns=["model", "mse"])
 
 sns.set_style("whitegrid")

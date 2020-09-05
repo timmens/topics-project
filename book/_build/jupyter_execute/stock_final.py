@@ -1,6 +1,6 @@
 # Final
 
-My final prediction model is build on the transformed data set from the previous section. That is, I ignore that the time index contains special information and act as if it were only another features. In the following I consider three models.
+My final prediction model is build on the transformed data set from the previous section. In the following I consider three models.
 
 1. Linear model
 2. Two-stage linear model (*the final model*)

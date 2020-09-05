@@ -1,6 +1,6 @@
 # Reverse Engineering
 
-In the following I will present a few things I learned about the data through "*reverse data engineering*". The main idea was to learn enough of the underlying process to be able to propose simple models from which I could simulate data, which in turn I could compare to the observed data to test the fit. Unfortunately however, in the end I did not learn enough to beat my final black-box algorithms in terms of prediction on the validation set, which is why I did not pursue this path any further. Nevertheless the insights made here can still be interesting. If, however, you wish to jump right to the final model please skip this section. Note also that in this section we only work with the pure training data.
+In the following I will present a few things I learned about the data through "*reverse data engineering*". The main idea was to learn enough of the underlying process to be able to propose simple models from which I could simulate data, which in turn I could compare to the observed data to test the fit. Unfortunately however, in the end I did not learn enough to beat my final black-box algorithms in terms of prediction on the validation set, which is why I did not pursue this path any further. Nevertheless the insights made here can still be interesting. If, however, you wish to jump right to the final model please skip this section.
 
 ## Preliminaries
 
@@ -64,12 +64,12 @@ shared.correlation_heatmap(corr=Sigma)
 
 ### Simulation?
 
-But how can we generate _uniform_ distributed data with such a correlation structure?
+Given the hypothesis that the features were simulated using the Matern covariance matrix, can we actually formulate an algroithm for this simulation step?
 
-Let $Z$ denote a $K$ (100) dimensional random vector.
+Let $Z$ denote a $K$ dimensional random vector.
 If we assume that the individual entries $Z_k$ have unit standard deviation, then $\text{corr}(Z) = \text{cov}(Z)$.
 
-Hence, we can simulate features with the structure from above using a simple algorithm. For this let $\Sigma$ denote the above Matérn covariance matrix (parameterized with $\ell = 0.1$ and $\nu$ = 0.5).
+Hence, we can simulate features with the structure from above using the following simple algorithm. For this let $\Sigma$ denote the above Matérn covariance matrix (parameterized with $\ell = 0.1$ and $\nu$ = 0.5).
 
 **Algorithm**:
 1. Draw samples $Z^{(i)}$ from $\mathcal{N}(0, \Sigma)$ for $i=1,\dots,n$
@@ -77,7 +77,7 @@ Hence, we can simulate features with the structure from above using a simple alg
 
 where $\Phi$ denotes the standard normal cumulative distribution function.
 
-To check wether this works let us simulate a smalle data set in this fashion.
+To check wether this works let us simulate a small data set in this fashion. We need to check that the empirical correlation matrix resembles the ones from above, and that the marginal distributions are approximately uniform.
 
 n = 25_000
 mvnormal = multivariate_normal(cov=Sigma)
@@ -105,12 +105,12 @@ for col in ["X3", "X12", "X37"]:
 
 We have seen that the covariance/correlation structure of the features is very similar to a Matern covariance.
 A major component of feature analysis is to check wether one can reduce the dimensionality of the feature set.
-As all our features are distributed uniformly and the correlation structure does not admit any grouping we cannot apply classicaly techniques as PCA for sensible dimensionality reduction.
-This means if we want to reduce the dimensionality we have to actually find and eliminate the features that are unrelated with the outcome (either via direct or indirect effects).
+As all our features are distributed identically and the correlation structure does not admit any grouping we cannot apply classical techniques such as PCA for sensible dimensionality reduction.
+This means if we want to reduce the dimensionality we have to actually find and eliminate the features that are unrelated with the outcome or have a negligible effect.
 
 ## Outcomes
 
-To learn more about the outcome structure I fit the parameters of a normal and t distribution on the outcomes, plot the outcomes using a histogram and draw the two distributions on top.
+To learn more about the outcome structure I fit the parameters of a normal and t distribution on the outcomes, plot the outcomes using a histogram and draw the two distributions on top. Visualizing the outcome distribution can be important to check wether one needs to transform the distribution, e.g. in the case of positive data.
 
 mle_tuple_t = t.fit(y.values.flatten(), floc=y.values.mean())
 mle_tuple_norm = norm.fit(y.values.flatten())
@@ -125,14 +125,14 @@ ax.plot(x, norm_distr.pdf(x), linewidth=2.5, color="royalblue")
 ax.legend(['t-distr.', 'normal-distr.'], prop={'size': 16})
 plt.show()
 
-From the plot we can see that the outcomes are more tightly centered than we would expect from a normal distribution. The fitted t-distribution fits the outcome distribution better but still not optimal. Nevertheless if we are willing to assume exogeneity and an additive error structure, we would expect from the above plot that the model errors follow a more tightly centered distribution rather than a normal.
+From the plot we can see that the outcomes are more tightly centered than we would expect from a normal distribution. The fitted t-distribution fits the outcome distribution better but still not optimal. Nevertheless if we are willing to assume exogeneity and an additive error structure, we would expect from the above plot that the model errors follow a more tightly centered distribution with large tails rather than a normal.
 
 The most important insight from the above plot is that there is no need to transform the outcome for a better model fit, as is the case for constrained or positive data.
 
 ## Relationship Between Outcomes and Features
 
 To better understand how the outcomes are affected by the features I consider one dimensional regression plots. That is, for each feature $X_k$ ($k=1,\dots,K$) I consider the plot of $Y$ vs. $X_k$.
-(offline I also considered all two dimensional interaction plot but these are too many to be displayed here and they did not provide any useful insights.)
+(Offline I also considered all two dimensional interaction plot but these are too many to be displayed here and they did not provide any useful insights.)
 
 Since $K$ (=100) plots are quite a few plots I simpy show a video where we iterate through all plots very fast...
 
@@ -147,24 +147,27 @@ That makes sense since we already observed that the features follow a Matern sty
 Hence, we would expect that these neighboring features *look like* they have a similar effect on the outcome.
 
 Secondly, we see that for many $k$'s the effect looks negligible.
-In the next steps we analyze this strucutre of the data more closely and try to establish a more quantitative answer to whether some features are irrelevant.
+In the next steps we analyze this structure of the data more closely and try to establish a more quantitative answer to whether some features are irrelevant.
 
-Lastly, before jumping into a quantitative analysis let us consider how the above data structure could have emerged.
+Lastly, before jumping into a quantitative analysis let me provide a guess on how the above data structure could have emerged.
 Say we model the outcomes using an additive model and each component is modeled by a 3rd degree polynomial.
-We then pick a few features, say 2-5, and give them non-zero coefficients and simulate an additive error term, with which we then compute the outcomes.
+We then pick a few features, say 2-5, and give them non-zero coefficients.
 Since the features were created with the special covariance structure from above we would expect that for all features that are close to features with non-zero coefficients, the estimated coefficents would also be non-zero, but shrunk towards zero.
-If this is the case it only remains to find these few relevant features, which would stand out in the sense that the norm of their coefficient values is a local maximum on the discrete space $\{1,\dots,K \}$.
 
 ### Quantitative Analysis
 
-To get a more quantatitive understanding of which features matter we will 
+To get a more quantatitive understanding of which features matter I will 
 
 1. Fit a regularized linear model (first-degree, second-degree) using the Lasso and disregard features with zero-coefficient
 2. Use a recursive feature elimination with cross-validation
-3. Fit an third-degree ridge regression for each feature dimension and compare
+3. Fit a third-degree ridge regression for each feature dimension and compare coefficients
+
     
-    
-I wont dive too deep into each approach as in the end I decided to pusue a very different route. For each approach one can imagine fitting an unregularized model on the subset of selected features in a second stage. Nevertheless the results from below convinced me that the main effects in the data are sparse, which led me to choose hyperparameters in my final machine learning model that perform better under sparsity.
+I wont dive too deep into the details of each approach as in the end I decided to pusue a very different route.
+
+Each of the following approaches could have been used to select a small subset of features on which another model could have been fit in a second stage. I did not pursue this strategy in my final model, which is why I do not provide any detailed explainations. Nevertheless the results from below convinced me that the main effects in the data are sparse, which led me to choose hyperparameters in my final machine learning model that perform better under sparsity. This approach also goes well with the "Bet on Sparsity" principle, on which Rob Tibshirani writes:
+
+>Hastie et al. (2001) coined the informal “Bet on Sparsity” principle. The l1 methods assume that the truth is sparse, in some basis. If the assumption holds true, then the parameters can be efficiently estimated using l1 penalties. If the assumption does not hold—so that the truth is dense—then no method will be able to recover the underlying model without a large amount of data per parameter.
 
 #### The Lasso Approach
 
@@ -208,28 +211,13 @@ lasso_model_poly = lasso_model.fit(XX, y)
 relevant_poly = XX.columns[lasso_model_poly.coef_ != 0].to_list()
 print("Relevant features chosen via Lasso:", relevant_poly)
 
-_, _, coefs = lars_path(XX.values, y.values, method='lasso', verbose=True)
-
-xx = np.sum(np.abs(coefs.T), axis=1)
-xx /= xx[-1]
-
-plt.plot(xx, coefs.T, alpha=0.75)
-ymin, ymax = plt.ylim()
-plt.vlines(xx, ymin, ymax, linestyle='dashed', lw=0.5)
-plt.xlabel('|coef| / max|coef|')
-plt.title('LASSO Path')
-plt.axis('tight')
-plt.show()
-
 #### Recursive Feature Elimination with CV
 
 As above, I will not dive too deep into the inner workings of the RFECV function as this it not my main model / model selection tool. Here I will apply it on only on the first order effects.
 
-The main idea is to recursively consider smaller and smaller subsets of the features. I use 5-fold CV to compute the *optimal* subset and plot the negative mean squared error against the number of features.
+The main idea is to recursively consider smaller and smaller subsets of features. I use 5-fold CV to compute the *optimal* subset and plot the negative mean squared error against the number of features.
 
-***Note.***
-
-As mentioned above I only include the first order effects here since the number of terms explodes when also considering the interactions terms. Still, for each included regressor one could fit a, say, 4th degree polynomial instead of the 1st degree effect I consider below.
+***Note.*** As mentioned above I only include the first order effects here since the number of terms explodes when also considering the interactions terms. Still, for each included regressor one could fit a 4th degree polynomial instead of the 1st degree effect I consider below.
 
 linear_model = LinearRegression()
 rfecv = RFECV(estimator=linear_model, step=1, cv=5, scoring="neg_mean_squared_error")
@@ -244,45 +232,38 @@ plt.show()
 
 #### The Ridge Comparison Approach
 
-In this last approach the overall goal is to fit a third-degree linear model with l2 regularization, i.e. a ridge regression, for each feature and plot the coefficient values with the feature index on the x-axis. In particular we fit the model $Y \sim \beta_0 + \beta_1 X_k + \beta_2 X_k^2 + \beta_3 X_k^3$ using an l2 regularization for each $k = 1,\dots,K$ and set all coefficients which are below some threshold to zero. The results are compared across $k$. The regularization parameter is chosen via 5-fold cross validation for each $k$ independently.
+In this last approach the overall goal is to fit a third-degree linear model with l2 regularization, i.e. a ridge regression, for all features and plot the coefficient values with the feature index on the x-axis. In particular I fit the model $Y \sim \beta_0 + \sum_{k=1}^K \beta_{1k} X_k + \beta_{2k} X_k^2 + \beta_{3k} X_k^3$ using an l2 regularization and set all coefficients which are below some threshold (here 0.75) to zero. The results are compared across $k$. The regularization parameter is chosen via 5-fold cross validation.
 
-def get_ridge_coefs(X, y, order=3):
-    """Fit a Ridge regression model using cv."""
-    XX = PolynomialFeatures(degree=order, include_bias=False).fit_transform(X)
-    ridge = RidgeCV(cv=5).fit(XX, y)
-    coef = ridge.coef_.flatten()
-    return coef
+XX = pd.concat([X ** k for k in range(1, 4)], axis=1)
 
-order = 3
-threshold = 0.75
+alphas = np.logspace(-5, 1, num=20)
+ridge = RidgeCV(cv=5, alphas=alphas).fit(XX, y)
 
 df_coef = pd.DataFrame(
-    index=range(1, len(X.columns) + 1),
-    columns=["beta1", "beta2", "beta3"]
+    ridge.coef_.reshape((-1, 3), order="F"),
+    columns=["beta1", "beta2", "beta3"],
+    index=range(1, len(X.columns) + 1)
 )
-for i, col in enumerate(X):
-    coefs = get_ridge_coefs(X[[col]], y, order=order)
-    df_coef.loc[i+1, :] = coefs
-    
-df_coef[df_coef.abs() < threshold] = 0
 
+threshold = 0.75
+df_coef[df_coef.abs() < threshold] = 0
 df_coef = df_coef.rename_axis(
     "feature_id", axis=0
 ).reset_index().melt(id_vars="feature_id", var_name="coef")
-
 df_coef["value"] = df_coef["value"].astype(float)
 
 plt.figure()
-ax = sns.lineplot(
+ax = sns.scatterplot(
     x="feature_id", y="value", hue="coef", data=df_coef
 )
-ax.vlines([3, 12, 13, 14, 37, 38, 39, 44], ymin=-14, ymax=10, color="black", lw=0.75, linestyle="dashed")
+ymax, ymin = df_coef["value"].max(), df_coef["value"].min()
+ax.vlines([3, 12, 13, 14, 37, 38, 39, 44], ymin=ymin, ymax=ymax, color="black", lw=0.65, linestyle="dashed")
 plt.legend(prop={'size': 16})
 plt.xlim(0, 100)
 plt.xticks((1,) + tuple(range(10, 100, 10)))
-plt.plot()
+_ = plt.plot()
 
-The dashed black line represent features that were selected by the first-order Lasso approach
+The dashed black lines represent features that were selected by the first-order Lasso approach
 
 ## Conclusions  (so far)
 
