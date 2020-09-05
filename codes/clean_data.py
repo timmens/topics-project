@@ -14,9 +14,15 @@ import pandas as pd
 ROOT = Path(__file__).absolute().parent.parent
 
 
-def _transform_date_to_year_column(df):
-    df["year"] = pd.to_datetime(df["date"]).dt.year
+def _transform_date_to_year_and_quarter_column(df):
+    date = pd.to_datetime(df["date"])
+    df["year"] = date.dt.year
+
+    quarters = pd.get_dummies(date.dt.quarter).iloc[:, 1:]
+    quarters.columns=["quarter2", "quarter3", "quarter4"]
+
     df = df.drop("date", axis=1)
+    df = pd.concat((df, quarters), axis=1)
     return df
 
 
@@ -33,7 +39,7 @@ def _drop_outliers(df, threshold):
 def main():
     df = pd.read_parquet(ROOT / "data" / "stock_data.parquet")
 
-    df = _transform_date_to_year_column(df)
+    df = _transform_date_to_year_and_quarter_column(df)
     df = _drop_old_observations(df, oldest_year=1990)
     df = _drop_outliers(df, threshold=6)
     df = df.reset_index(drop=True)

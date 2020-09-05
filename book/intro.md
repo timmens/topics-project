@@ -34,7 +34,6 @@ $ python build_project.py
 ```
 
 ***Note.***
-
 It is not necessary to use conda here as long as all the packages that I use are available to the Python interpreter. Conda just provides a very easy way to create a sandbox environment in which all packages will be available without messing with the system.
 
 ## Predictions
