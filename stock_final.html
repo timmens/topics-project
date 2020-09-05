@@ -207,7 +207,7 @@
                 
   <div class="section" id="final">
 <h1>Final<a class="headerlink" href="#final" title="Permalink to this headline">¶</a></h1>
-<p>My final prediction model is build on the transformed data set from the previous section. That is, I ignore that the time index contains special information and act as if it were only another features. In the following I consider three models.</p>
+<p>My final prediction model is build on the transformed data set from the previous section. In the following I consider three models.</p>
 <ol class="simple">
 <li><p>Linear model</p></li>
 <li><p>Two-stage linear model (<em>the final model</em>)</p></li>
@@ -266,7 +266,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-none notranslate"><div class="highlight"><pre><span></span>(Linear Model) MSE: 0.9524997479334116
+<div class="output stream highlight-none notranslate"><div class="highlight"><pre><span></span>(Linear Model) MSE: 0.9494373195140412
 </pre></div>
 </div>
 </div>
@@ -290,7 +290,7 @@
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-none notranslate"><div class="highlight"><pre><span></span>Relevant features chosen via Lasso:
-[&#39;at_adj&#39;, &#39;beme&#39;, &#39;cum_return_12_2&#39;, &#39;cum_return_12_7&#39;, &#39;cum_return_1_0&#39;, &#39;cum_return_36_13&#39;, &#39;d_so&#39;, &#39;e2p&#39;, &#39;free_cf&#39;, &#39;noa&#39;, &#39;pcm&#39;, &#39;pm&#39;, &#39;pm_adj&#39;, &#39;ret_max&#39;, &#39;suv&#39;, &#39;year&#39;]
+[&#39;at_adj&#39;, &#39;beme&#39;, &#39;cum_return_12_2&#39;, &#39;cum_return_12_7&#39;, &#39;cum_return_1_0&#39;, &#39;cum_return_36_13&#39;, &#39;d_so&#39;, &#39;e2p&#39;, &#39;free_cf&#39;, &#39;noa&#39;, &#39;pcm&#39;, &#39;pm&#39;, &#39;pm_adj&#39;, &#39;ret_max&#39;, &#39;suv&#39;, &#39;year&#39;, &#39;quarter3&#39;, &#39;quarter4&#39;]
 </pre></div>
 </div>
 </div>
@@ -329,7 +329,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-none notranslate"><div class="highlight"><pre><span></span>(Lasso Polynomial Model) MSE: 0.9479932782312956
+<div class="output stream highlight-none notranslate"><div class="highlight"><pre><span></span>(Lasso Polynomial Model) MSE: 0.94026689736296
 </pre></div>
 </div>
 </div>
