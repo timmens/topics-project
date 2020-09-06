@@ -370,7 +370,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-none notranslate"><div class="highlight"><pre><span></span>(Neural Network) MSE: 5.320006487951543
+<div class="output stream highlight-none notranslate"><div class="highlight"><pre><span></span>(Neural Network) MSE: 5.289789777325298
 </pre></div>
 </div>
 </div>
@@ -472,14 +472,20 @@
 <p><em><strong>Note.</strong></em> My notation and explaination is guided by <a class="bibtex reference internal" href="zreferences.html#friedman2002" id="id6">[Fri02]</a> and <a class="bibtex reference internal" href="zreferences.html#esl2001" id="id7">[HTF01]</a>.</p>
 <hr class="docutils" />
 <p><strong>Notation and Preliminaries</strong></p>
-<p>Assume we are given a data set <span class="math notranslate nohighlight">\(\{(x_i, y_i) : i=1,\dots,N\}\)</span>, with <span class="math notranslate nohighlight">\(x_i \in \mathbb{R}^p\)</span> and <span class="math notranslate nohighlight">\(y_i \in \mathbb{R}\)</span>. These observations are assumed to be i.i.d. according to some joint distribution <span class="math notranslate nohighlight">\(\mathbb{P}_{xy}\)</span>. An important goal of statistical learning is to find a function <span class="math notranslate nohighlight">\(f^* : \mathbb{R}^p \to \mathbb{R}\)</span> such that
-<span class="math notranslate nohighlight">\($f^* = \underset{f}{\text{argmin}} \, \mathbb{E}_{xy}\left[L(y, f(x)) \right] ,\)</span>$
-given some loss function <span class="math notranslate nohighlight">\(L\)</span>, where the expecation is taken over the joint distribution of <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span> values.</p>
-<p>As is very common in statistical learning, boosting is a procedure to approximate <span class="math notranslate nohighlight">\(f^*\)</span> by an additive model of the form
-<span class="math notranslate nohighlight">\($f(x) = \sum_{m=0}^M \beta_m b(x; \gamma_m), $\)</span>
-where the <span class="math notranslate nohighlight">\(\beta_m\)</span> denote expansion coefficients and <span class="math notranslate nohighlight">\(b(\cdot\,,\gamma) : \mathbb{R}^p \to \mathbb{R}\)</span> denote the so called <em>base-learners</em> which are parameterized by <span class="math notranslate nohighlight">\(\gamma\)</span>. If feasible in general we would like to estimate the parameters by solving
-<span class="math notranslate nohighlight">\($\underset{\{\beta_m, \gamma_m\}_1^M}{\min}  \sum_{i=1}^N L\left(y_i, \sum_{m=0}^M \beta_m b(x_i; \gamma_m)\right).\)</span>$
-For a general loss function and base-learner, however, this optimization is computationally intractable. We will also see that there are other reasons why we would like to estimate the coefficients in a different fashion.</p>
+<p>Assume we are given a data set <span class="math notranslate nohighlight">\(\{(x_i, y_i) : i=1,\dots,N\}\)</span>, with <span class="math notranslate nohighlight">\(x_i \in \mathbb{R}^p\)</span> and <span class="math notranslate nohighlight">\(y_i \in \mathbb{R}\)</span>. These observations are assumed to be i.i.d. according to some joint distribution <span class="math notranslate nohighlight">\(\mathbb{P}_{xy}\)</span>. An important goal of statistical learning is to find a function <span class="math notranslate nohighlight">\(f^* : \mathbb{R}^p \to \mathbb{R}\)</span> such that</p>
+<p>\begin{align*}
+f^* = \underset{f}{\text{argmin}} , \mathbb{E}^{xy} \left [L(y, f(x)) \right],
+\end{align*}
+given some loss function <span class="math notranslate nohighlight">\(L\)</span>, where the expectation is taken over the joint distribution of <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span> values.</p>
+<p>As is very common in statistical learning, boosting is a procedure to approximate <span class="math notranslate nohighlight">\(f^*\)</span> by an additive model of the form</p>
+<p>\begin{align*}
+f(x) = \sum_{m=0}^M \beta_m b(x; \gamma_m),
+\end{align*}
+where the <span class="math notranslate nohighlight">\(\beta_m\)</span> denote expansion coefficients and <span class="math notranslate nohighlight">\(b(\cdot\,,\gamma) : \mathbb{R}^p \to \mathbb{R}\)</span> denote the so called <em>base-learners</em> which are parameterized by <span class="math notranslate nohighlight">\(\gamma\)</span>. If feasible in general we would like to estimate the parameters by solving</p>
+<p>\begin{align*}
+\underset{{\beta_m, \gamma_m}<em>1^M}{\min}  \sum</em>{i=1}^N L\left(y_i, \sum_{m=0}^M \beta_m b(x_i; \gamma_m)\right).
+\end{align*}</p>
+<p>For a general loss function and base-learner, however, this optimization is computationally intractable. We will also see that there are other reasons why we would like to estimate the coefficients in a different fashion.</p>
 <hr class="docutils" />
 <p><strong>General Concept</strong></p>
 <p>A simple algorithm to approximate the coefficient estimates from above is to fit each tuple <span class="math notranslate nohighlight">\((\beta_m, \gamma_m)\)</span> in a stage-wise fashion. That is, one starts with an initial guess <span class="math notranslate nohighlight">\(f_0\)</span> and then</p>
@@ -501,14 +507,20 @@ For a general loss function and base-learner, however, this optimization is comp
 <p>With squared-error loss (<span class="math notranslate nohighlight">\(L(y, x) = \frac{1}{2}(y - x)^2\)</span>) the pseudo-residuals <span class="math notranslate nohighlight">\(r_{im}\)</span> are equivalent to the actual residuals <span class="math notranslate nohighlight">\(r_{im} = y_i - f_{m-1}(x_i)\)</span>. This allows for the nice interpretation of the procedure that given any step <span class="math notranslate nohighlight">\(m\)</span>, we consider the deviations of the labels <span class="math notranslate nohighlight">\(y_i\)</span> from our current estimate <span class="math notranslate nohighlight">\(f_{m-1}(x_i)\)</span> and train a model to fit these deviations. I.e. in each iterations the model tries to improve the fit in the regions where the fit is worst. With other loss functions, say absolute-error loss (<span class="math notranslate nohighlight">\(L(y, x) = |y - x|\)</span>) we get <span class="math notranslate nohighlight">\(r_{im} = \text{sign}(y_i - f_{m-1}(x_i))\)</span> and in the <span class="math notranslate nohighlight">\(m\)</span>-th step the base-learner is fit to simply predict the direction to which a sample deviates, which is more robust to outliers as it ignores the magnitude of the deviation.</p>
 <hr class="docutils" />
 <p><strong>Gradient Tree Boosting</strong></p>
-<p>A popular choice of base-learners are decision trees. When using trees as base learners some steps in the generic algorithm simplify and some can even be improved. First, let us formally define a tree. A regression tree with <span class="math notranslate nohighlight">\(J\)</span> terminal-nodes is a function
-<span class="math notranslate nohighlight">\($T\left(x; \{\alpha_j, R_j\}_{j=1}^J \right) = \sum_{j=1}^J \alpha_j \mathbb{1}_{R_j} (x) ,\)</span>$
+<p>A popular choice of base-learners are decision trees. When using trees as base learners some steps in the generic algorithm simplify and some can even be improved. First, let us formally define a tree. A regression tree with <span class="math notranslate nohighlight">\(J\)</span> terminal-nodes is a function</p>
+<p>\begin{align*}
+T\left(x; {\alpha_j, R_j}<em>{j=1}^J \right) = \sum</em>{j=1}^J \alpha_j \mathbb{1}<em>{R</em>{j}}(x),
+\end{align*}
 where <span class="math notranslate nohighlight">\(\{R_j\}_{j=1}^J\)</span> is a partition of the feature space <span class="math notranslate nohighlight">\(\mathbb{R}^p\)</span>. Strictly speaking, <span class="math notranslate nohighlight">\(J\)</span> is also a parameter, however, it is usually considered a <em>hyper-parameter</em> which has to be chosen using prior information or via methods like cross-validation.</p>
-<p>Let us now consider the second step of the above algorithm. First note that optimizing over <span class="math notranslate nohighlight">\(\rho\)</span> is irrelevant in the case of trees as we can always define <span class="math notranslate nohighlight">\(\tilde{\alpha}_j := \rho \alpha_j\)</span>. But then solving 2 is equivalent to solving
-<span class="math notranslate nohighlight">\($\{\alpha_{jm}, R_{jm}\}_{j=1}^J =: \gamma_m = \underset{\gamma}{\text{argmin}} \, \sum_{i=1}^N \left(r_{im} - T(x_i; \gamma) \right)^2 $\)</span>
+<p>Let us now consider the second step of the above algorithm. First note that optimizing over <span class="math notranslate nohighlight">\(\rho\)</span> is irrelevant in the case of trees as we can always define <span class="math notranslate nohighlight">\(\tilde{\alpha}_j := \rho \alpha_j\)</span>. But then solving 2 is equivalent to solving</p>
+<p>\begin{align*}
+{\alpha_{jm}, R_{jm}}<em>{j=1}^J =: \gamma_m = \underset{\gamma}{\text{argmin}} , \sum</em>{i=1}^N \left(r_{im} - T(x_i; \gamma) \right)^2
+\end{align*}
 For a given <span class="math notranslate nohighlight">\(J\)</span> this combinatorial optimization problem is again computationally intractable, but there are many algorithms that can approximate the solution; see for example the CART algorithm in <a class="bibtex reference internal" href="zreferences.html#esl2001" id="id9">[HTF01]</a>.</p>
-<p>Henceforth say we have (approximately) solved the tree optimization problem (step 2) and are left to optimize for the constant <span class="math notranslate nohighlight">\(\beta_m\)</span> (step 3). As will be seen, with trees we can even go one step further and choose an optimal value for each terminal-node region. Let <span class="math notranslate nohighlight">\(\gamma_m = \{\alpha_j, R_j\}_{j=1}^J\)</span> be the fitted parameters from step 2. The next simplification when using trees stems from the fact the the <span class="math notranslate nohighlight">\(R_j\)</span>’s form a partition of the feature space. We can rewrite the sum over the individuals as a sum over the terminal-node regions, as a tree predicts the same value for each region. That is, step 3 becomes
-<span class="math notranslate nohighlight">\($\{\beta_{jm}\}_{j=1}^J = \underset{\beta_1,\dots,\beta_J}{\text{argmin}} \, \sum_{j=1}^J \sum_{x_i \in R_j} L \left(y_i, f_{m-1}(x_i) + \beta_j \right) \,,\)</span>$
+<p>Henceforth say we have (approximately) solved the tree optimization problem (step 2) and are left to optimize for the constant <span class="math notranslate nohighlight">\(\beta_m\)</span> (step 3). As will be seen, with trees we can even go one step further and choose an optimal value for each terminal-node region. Let <span class="math notranslate nohighlight">\(\gamma_m = \{\alpha_j, R_j\}_{j=1}^J\)</span> be the fitted parameters from step 2. The next simplification when using trees stems from the fact the the <span class="math notranslate nohighlight">\(R_j\)</span>’s form a partition of the feature space. We can rewrite the sum over the individuals as a sum over the terminal-node regions, as a tree predicts the same value for each region. That is, step 3 becomes</p>
+<p>\begin{align*}
+{\beta_{jm}}<em>{j=1}^J = \underset{\beta_1,\dots,\beta_J}{\text{argmin}} , \sum</em>{j=1}^J \sum_{x_i \in R_j} L \left(y_i, f_{m-1}(x_i) + \beta_j \right) ,,
+\end{align*}
 which can be solved for each region seperately. Note that we can write <span class="math notranslate nohighlight">\(L \left(y_i, f_{m-1}(x_i) + \beta_j \right)\)</span> instead of <span class="math notranslate nohighlight">\(L \left(y_i, f_{m-1}(x_i) + \beta_j \alpha_j \right)\)</span>.</p>
 <p>As an example, with squared error loss we would then get <span class="math notranslate nohighlight">\(\beta_{jm} = \text{mean}(y_i - f_{m-1}(x_i) : x_i \in R_{jm}) = \text{mean}(r_{im} : x_i \in R_{jm})\)</span>.</p>
 <hr class="docutils" />
