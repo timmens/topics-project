@@ -1,0 +1,40 @@
+\babel@toc {english}{}
+\contentsline {chapter}{\numberline {1}Problem Description}{3}{chapter.1}%
+\contentsline {chapter}{\numberline {2}Data Format}{5}{chapter.2}%
+\contentsline {chapter}{\numberline {3}Code}{7}{chapter.3}%
+\contentsline {chapter}{\numberline {4}Predictions}{9}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Simulated Data}{9}{section.4.1}%
+\contentsline {subsection}{\numberline {4.1.1}Data Description}{9}{subsection.4.1.1}%
+\contentsline {subsubsection}{Train / Validation Split}{10}{subsubsection*.3}%
+\contentsline {subsubsection}{Next Up}{10}{subsubsection*.4}%
+\contentsline {subsection}{\numberline {4.1.2}Reverse Engineering}{10}{subsection.4.1.2}%
+\contentsline {subsubsection}{Preliminaries}{10}{subsubsection*.5}%
+\contentsline {subsubsection}{Features}{11}{subsubsection*.6}%
+\contentsline {paragraph}{Simulation?}{13}{paragraph*.7}%
+\contentsline {paragraph}{Recap \sphinxhyphen {} Features}{17}{paragraph*.8}%
+\contentsline {subsubsection}{Outcomes}{17}{subsubsection*.9}%
+\contentsline {subsubsection}{Relationship Between Outcomes and Features}{18}{subsubsection*.10}%
+\contentsline {paragraph}{Quantitative Analysis}{18}{paragraph*.11}%
+\contentsline {subparagraph}{The Lasso Approach}{19}{subparagraph*.12}%
+\contentsline {subparagraph}{Recursive Feature Elimination with CV}{21}{subparagraph*.13}%
+\contentsline {subparagraph}{The Ridge Comparison Approach}{22}{subparagraph*.14}%
+\contentsline {subsubsection}{Conclusions (so far)}{23}{subsubsection*.15}%
+\contentsline {subsection}{\numberline {4.1.3}Final}{23}{subsection.4.1.3}%
+\contentsline {subsubsection}{Preliminaries}{24}{subsubsection*.16}%
+\contentsline {subsubsection}{1. Linear Model Using a Subset of Features}{24}{subsubsection*.17}%
+\contentsline {subsubsection}{2. Deep Neural Network with Dropout Regularization}{25}{subsubsection*.18}%
+\contentsline {subsubsection}{3. Two\sphinxhyphen {}stage Random Forest with Feature Selection}{26}{subsubsection*.19}%
+\contentsline {subsubsection}{4. Gradient tree boosting (\sphinxstyleemphasis {the final model})}{27}{subsubsection*.20}%
+\contentsline {paragraph}{Theory}{28}{paragraph*.21}%
+\contentsline {paragraph}{Implementation / Application}{31}{paragraph*.22}%
+\contentsline {subsubsection}{MSE Comparison}{31}{subsubsection*.23}%
+\contentsline {section}{\numberline {4.2}Stock Data}{32}{section.4.2}%
+\contentsline {subsection}{\numberline {4.2.1}Data Description}{32}{subsection.4.2.1}%
+\contentsline {subsubsection}{Cleaning the Data}{33}{subsubsection*.24}%
+\contentsline {subsubsection}{Train / Validation Split}{33}{subsubsection*.25}%
+\contentsline {subsection}{\numberline {4.2.2}Final}{33}{subsection.4.2.2}%
+\contentsline {subsubsection}{Preliminaries}{33}{subsubsection*.26}%
+\contentsline {subsubsection}{1. Linear Model}{34}{subsubsection*.27}%
+\contentsline {subsubsection}{2. Two\sphinxhyphen {}stage Linear Model (\sphinxstyleemphasis {final model})}{34}{subsubsection*.28}%
+\contentsline {section}{\numberline {4.3}Bibliography}{35}{section.4.3}%
+\contentsline {chapter}{Bibliography}{37}{chapter*.29}%
