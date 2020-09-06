@@ -182,23 +182,19 @@ I will first explain the general idea behind boosting and gradient boosting. The
 
 **Notation and Preliminaries**
 
-Assume we are given a data set $\{(x_i, y_i) : i=1,\dots,N\}$, with $x_i \in \mathbb{R}^p$ and $y_i \in \mathbb{R}$. These observations are assumed to be i.i.d. according to some joint distribution $\mathbb{P}_{xy}$. An important goal of statistical learning is to find a function $f^* : \mathbb{R}^p \to \mathbb{R}$ such that
+Assume we are given a data set $\{(x_i, y_i) : i=1,\dots,N\}$, with $x_i \in \mathbb{R}^p$ and $y_i \in \mathbb{R}$. These observations are assumed to be i.i.d. according to some joint distribution $\mathbb{P}_{xy}$. An important goal of statistical learning is to find a function
 
-\begin{align*}
-f^* = \underset{f}{\text{argmin}} \, \mathbb{E}^{xy} \left [L(y, f(x)) \right],
-\end{align*}
+> $f^* : \mathbb{R}^p \to \mathbb{R}$ such that $f^* = \underset{f}{\text{argmin}} \, \mathbb{E}^{xy} \left [L(y, f(x)) \right]$,
+
 given some loss function $L$, where the expectation is taken over the joint distribution of $x$ and $y$ values.
 
 As is very common in statistical learning, boosting is a procedure to approximate $f^*$ by an additive model of the form
 
-\begin{align*}
-f(x) = \sum_{m=0}^M \beta_m b(x; \gamma_m),
-\end{align*}
+> $f(x) = \sum_{m=0}^M \beta_m b(x; \gamma_m)$,
+
 where the $\beta_m$ denote expansion coefficients and $b(\cdot\,,\gamma) : \mathbb{R}^p \to \mathbb{R}$ denote the so called *base-learners* which are parameterized by $\gamma$. If feasible in general we would like to estimate the parameters by solving
 
-\begin{align*}
-\underset{\{\beta_m, \gamma_m\}_1^M}{\min}  \sum_{i=1}^N L\left(y_i, \sum_{m=0}^M \beta_m b(x_i; \gamma_m)\right).
-\end{align*}
+> $\underset{\{\beta_m, \gamma_m\}_1^M}{\min}  \sum_{i=1}^N L\left(y_i, \sum_{m=0}^M \beta_m b(x_i; \gamma_m)\right)$.
 
 For a general loss function and base-learner, however, this optimization is computationally intractable. We will also see that there are other reasons why we would like to estimate the coefficients in a different fashion.
 
@@ -234,23 +230,20 @@ With squared-error loss ($L(y, x) = \frac{1}{2}(y - x)^2$) the pseudo-residuals 
 
 A popular choice of base-learners are decision trees. When using trees as base learners some steps in the generic algorithm simplify and some can even be improved. First, let us formally define a tree. A regression tree with $J$ terminal-nodes is a function
 
-\begin{align*}
-T\left(x; \{\alpha_j, R_j\}_{j=1}^J \right) = \sum_{j=1}^J \alpha_j \mathbb{1}_{R_{j}}(x),
-\end{align*}
+> $T\left(x; \{\alpha_j, R_j\}_{j=1}^J \right) = \sum_{j=1}^J \alpha_j \mathbb{1}_{R_{j}}(x)$,
+
 where $\{R_j\}_{j=1}^J$ is a partition of the feature space $\mathbb{R}^p$. Strictly speaking, $J$ is also a parameter, however, it is usually considered a *hyper-parameter* which has to be chosen using prior information or via methods like cross-validation. 
 
 Let us now consider the second step of the above algorithm. First note that optimizing over $\rho$ is irrelevant in the case of trees as we can always define $\tilde{\alpha}_j := \rho \alpha_j$. But then solving 2 is equivalent to solving
 
-\begin{align*}
-\{\alpha_{jm}, R_{jm}\}_{j=1}^J =: \gamma_m = \underset{\gamma}{\text{argmin}} \, \sum_{i=1}^N \left(r_{im} - T(x_i; \gamma) \right)^2
-\end{align*}
+> $\{\alpha_{jm}, R_{jm}\}_{j=1}^J =: \gamma_m = \underset{\gamma}{\text{argmin}} \, \sum_{i=1}^N \left(r_{im} - T(x_i; \gamma) \right)^2$.
+
 For a given $J$ this combinatorial optimization problem is again computationally intractable, but there are many algorithms that can approximate the solution; see for example the CART algorithm in {cite}`esl2001`.
 
 Henceforth say we have (approximately) solved the tree optimization problem (step 2) and are left to optimize for the constant $\beta_m$ (step 3). As will be seen, with trees we can even go one step further and choose an optimal value for each terminal-node region. Let $\gamma_m = \{\alpha_j, R_j\}_{j=1}^J$ be the fitted parameters from step 2. The next simplification when using trees stems from the fact the the $R_j$'s form a partition of the feature space. We can rewrite the sum over the individuals as a sum over the terminal-node regions, as a tree predicts the same value for each region. That is, step 3 becomes
 
-\begin{align*}
-\{\beta_{jm}\}_{j=1}^J = \underset{\beta_1,\dots,\beta_J}{\text{argmin}} \, \sum_{j=1}^J \sum_{x_i \in R_j} L \left(y_i, f_{m-1}(x_i) + \beta_j \right) \,,
-\end{align*}
+> $\{\beta_{jm}\}_{j=1}^J = \underset{\beta_1,\dots,\beta_J}{\text{argmin}} \, \sum_{j=1}^J \sum_{x_i \in R_j} L \left(y_i, f_{m-1}(x_i) + \beta_j \right)$,
+
 which can be solved for each region seperately. Note that we can write $L \left(y_i, f_{m-1}(x_i) + \beta_j \right)$ instead of $L \left(y_i, f_{m-1}(x_i) + \beta_j \alpha_j \right)$.
 
 As an example, with squared error loss we would then get $\beta_{jm} = \text{mean}(y_i - f_{m-1}(x_i) : x_i \in R_{jm}) = \text{mean}(r_{im} : x_i \in R_{jm})$.
